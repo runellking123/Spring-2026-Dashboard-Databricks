@@ -1,0 +1,125 @@
+This is an Enrollment Analytics Dashboard for a higher education institution. The data comes from a Jenzabar student information system and contains student enrollment, demographics, retention, and graduation information.
+
+IMPORTANT INSTRUCTIONS FOR ANSWERING QUESTIONS:
+
+1. ALWAYS USE MEASURES - Never use raw column names for calculations. Use these pre-built measures:
+
+ENROLLMENT MEASURES:
+- Use "Total Students" to count students (NOT COUNT or DISTINCTCOUNT of ID_NUM)
+- Use "Total Credit Hours" for credit hours (NOT SUM of HRS_ENROLLED)
+- Use "Avg Credit Hours" for average credit load (NOT AVERAGE of HRS_ENROLLED)
+- Use "Total Courses" for course counts (NOT SUM of NUM_OF_CRS)
+- Use "FT Students" for full-time student count
+- Use "PT Students" for part-time student count
+- Use "UG Students" for undergraduate count
+- Use "GR Students" for graduate count
+- Use "FT Percentage" for full-time percentage
+- Use "PT Percentage" for part-time percentage
+- Use "UG Percentage" for undergraduate percentage
+- Use "GR Percentage" for graduate percentage
+
+GPA MEASURES:
+- Use "Avg Term GPA" for term GPA (NOT AVERAGE of TRM_GPA)
+- Use "Avg Career GPA" for cumulative GPA (NOT AVERAGE of CAREER_GPA)
+- Use "Term Hours Attempted" for attempted hours
+- Use "Term Hours Earned" for earned hours
+- Use "Career Hours Earned" for total career hours
+
+DEMOGRAPHIC MEASURES:
+- Use "Female Students" for female count (NOT filtering GENDER column)
+- Use "Male Students" for male count
+- Use "Female Percentage" for female percentage
+- Use "Male Percentage" for male percentage
+- Use "First Gen Students" for first-generation count
+- Use "First Gen Percentage" for first-generation percentage
+
+RETENTION MEASURES:
+- Use "Fall Enrollment" for fall term headcount
+- Use "Spring Enrollment" for spring term headcount
+- Use "Persistence Rate" for fall-to-spring persistence (NOT dividing columns)
+- Use "Cohort Size" for entering cohort count
+
+GRADUATION MEASURES:
+- Use "Graduated Students" for graduate count
+- Use "Graduation Rate" for graduation percentage (NOT dividing columns)
+- Use "Active Students" for currently enrolled
+- Use "Exited Students" for students who left without degree
+
+COURSE MEASURES:
+- Use "Total Course Enrollments" for course enrollment count
+- Use "Course Credit Hours" for course-level credit hours
+- Use "Registered Enrollments" for active registrations
+- Use "Dropped Enrollments" for dropped courses
+- Use "Drop Rate" for course drop percentage
+
+2. TERMINOLOGY:
+- "Headcount" means Total Students
+- "Enrollment" means Total Students
+- "Credit hours" means Total Credit Hours
+- "FTE" or "Full-time equivalent" relates to Total Credit Hours divided by 15
+- "Retention" means students returning year-over-year
+- "Persistence" means students continuing fall-to-spring (use Persistence Rate)
+- "Graduation rate" means Graduation Rate measure
+- "First-gen" or "First generation" means First Gen Students
+
+3. TERM CODES:
+- YR_CDE is the academic year (2025 = 2025-2026 academic year)
+- TRM_CDE 10 = Fall, 30 = Spring, 50 = Summer
+- "Spring 2026" = YR_CDE '2025' AND TRM_CDE '30'
+- "Fall 2025" = YR_CDE '2025' AND TRM_CDE '10'
+- Use YR_TRM_DESC from year_term_table for friendly term names
+
+4. DIVISION CODES:
+- DIV_CDE 'UG' = Undergraduate (use UG Students measure)
+- DIV_CDE 'GR' = Graduate (use GR Students measure)
+
+5. ENROLLMENT STATUS:
+- PT_FT_STS 'F' = Full-Time (use FT Students measure)
+- PT_FT_STS 'P' = Part-Time (use PT Students measure)
+
+6. DEMOGRAPHICS:
+- For gender breakdowns, use Female Students and Male Students measures
+- For ethnicity, use VALUE_DESCRIPTION from ipeds_ethnic_race_val_def with Total Students
+- For geographic analysis, use STATE from address_master with Total Students
+- For first-generation, use First Gen Students and First Gen Percentage measures
+
+7. COHORT ANALYSIS:
+- ENTRANCE_YR and ENTRANCE_TRM in student_master define the cohort
+- Use Cohort Size measure for cohort denominator
+- Use Graduation Rate for cohort graduation percentage
+- Use Persistence Rate for term-to-term retention
+
+8. EXAMPLE QUESTION TRANSLATIONS:
+- "How many students?" → Use Total Students measure
+- "What is enrollment?" → Use Total Students measure
+- "Credit hour production?" → Use Total Credit Hours measure
+- "Average GPA?" → Use Avg Career GPA or Avg Term GPA measure
+- "Gender breakdown?" → Use Female Students, Male Students, Female Percentage, Male Percentage
+- "Retention rate?" → Use Persistence Rate measure
+- "How many graduated?" → Use Graduated Students measure
+- "Graduation rate?" → Use Graduation Rate measure
+- "Full-time vs part-time?" → Use FT Students, PT Students, FT Percentage, PT Percentage
+- "Undergrad vs graduate?" → Use UG Students, GR Students, UG Percentage, GR Percentage
+
+9. TABLES:
+- stud_term_sum_div: Main fact table with student-term enrollment data
+- student_crs_hist: Course-level enrollment details
+- name_master: Student names
+- biograph_master: Demographics (gender, citizenship)
+- student_master: Student attributes (cohort, first-gen status)
+- address_master: Geographic data (state, city, zip)
+- degree_history: Graduation and degree information
+- ethnic_race_report: Links students to ethnicity
+- ipeds_ethnic_race_val_def: Ethnicity descriptions
+- year_term_table: Term definitions and dates
+- major_minor_def: Major/minor descriptions
+
+10. NEVER DO THIS:
+- Never use COUNT(ID_NUM) - use Total Students instead
+- Never use SUM(HRS_ENROLLED) - use Total Credit Hours instead
+- Never use AVERAGE(TRM_GPA) - use Avg Term GPA instead
+- Never use AVERAGE(CAREER_GPA) - use Avg Career GPA instead
+- Never calculate percentages manually - use the percentage measures provided
+- Never filter GENDER directly - use Female Students or Male Students measures
+
+This data model is optimized for enrollment reporting, demographic analysis, retention tracking, and graduation outcomes analysis for institutional research and decision-making purposes.

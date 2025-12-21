@@ -1,0 +1,37 @@
+Windows Registry Editor Version 5.00
+
+; ============================================================================
+; Jenzabar Data Lake DSN Configuration
+; Databricks Connection via Simba Spark ODBC Driver
+;
+; To install: Double-click this file and confirm the registry import
+; To backup existing: Export from HKEY_CURRENT_USER\SOFTWARE\ODBC\ODBC.INI
+; ============================================================================
+
+; Add DSN to the list of User Data Sources
+[HKEY_CURRENT_USER\SOFTWARE\ODBC\ODBC.INI\ODBC Data Sources]
+"JenzabarDataLake"="Simba Spark ODBC Driver"
+
+; DSN Configuration
+[HKEY_CURRENT_USER\SOFTWARE\ODBC\ODBC.INI\JenzabarDataLake]
+"Driver"="C:\\Program Files\\Simba Spark ODBC Driver\\lib\\64\\simbaspark64.dll"
+"Description"="Jenzabar Databricks Data Lake Connection"
+"Host"="adb-5814127397732749.9.azuredatabricks.net"
+"Port"="443"
+"SparkServerType"="3"
+"AuthMech"="11"
+"Auth_Flow"="2"
+"ThriftTransport"="2"
+"SSL"="1"
+"HTTPPath"="/sql/1.0/warehouses/29078c19f03c03ca"
+"UseNativeQuery"="0"
+"FastSQLPrepare"="0"
+"DriverConfigTakePrecedence"="0"
+"EnableAsyncExec"="0"
+"RowsFetchedPerBlock"="10000"
+"DefaultStringColumnLength"="255"
+"BinaryColumnLength"="32767"
+"DecimalColumnScale"="10"
+"UseUnicodeSqlCharacterTypes"="1"
+"Catalog"="hive_metastore"
+"Schema"="j1"
