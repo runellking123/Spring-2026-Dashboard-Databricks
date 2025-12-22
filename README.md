@@ -1,211 +1,223 @@
-# Power BI Enrollment Dashboard - README
+# Power BI Enrollment Dashboard - Setup Guide
 
 ## Overview
-This Power BI dashboard connects to the Jenzabar Data Lake (Databricks) and provides enrollment analytics for higher education institutional research.
-
-## Connection Details
-| Setting | Value |
-|---------|-------|
-| Host | adb-5814127397732749.9.azuredatabricks.net |
-| HTTP Path | /sql/1.0/warehouses/29078c19f03c03ca |
-| Driver | Simba Spark ODBC Driver |
-| Authentication | Azure AD (browser-based) |
-| DSN Name | JenzabarDataLake |
-
-## Data Model
-
-### Tables Loaded
-| Table | Description | Type |
-|-------|-------------|------|
-| stud_term_sum_div | Student term enrollment summary | Fact |
-| student_crs_hist | Course-level enrollment history | Fact |
-| biograph_master | Demographics (gender, DOB, citizenship) | Dimension |
-| student_master | Student attributes (cohort, first-gen) | Dimension |
-| name_master | Student names | Dimension |
-| address_master | Geographic data (state, city, zip) | Dimension |
-| degree_history | Graduation and degree information | Dimension |
-| ethnic_race_report | Student ethnicity links | Bridge |
-| ipeds_ethnic_race_val_def | Ethnicity descriptions | Dimension |
-| year_term_table | Term definitions and dates | Dimension |
-| major_minor_def | Major/minor descriptions | Dimension |
-| division_def | Division descriptions (UG/GR) | Dimension |
-
-### Key Columns
-| Column | Table | Description |
-|--------|-------|-------------|
-| ID_NUM | All tables | Student ID (primary key) |
-| YR_CDE | stud_term_sum_div | Academic year (2025 = 2025-2026) |
-| TRM_CDE | stud_term_sum_div | Term code (10=Fall, 30=Spring, 50=Summer) |
-| DIV_CDE | stud_term_sum_div | Division (UG=Undergraduate, GR=Graduate) |
-| PT_FT_STS | stud_term_sum_div | Status (F=Full-time, P=Part-time) |
-
-### Term Code Reference
-| Term | YR_CDE | TRM_CDE | Example |
-|------|--------|---------|---------|
-| Fall 2025 | 2025 | 10 | YR_CDE='2025' AND TRM_CDE='10' |
-| Spring 2026 | 2025 | 30 | YR_CDE='2025' AND TRM_CDE='30' |
-| Summer 2026 | 2025 | 50 | YR_CDE='2025' AND TRM_CDE='50' |
+This document covers the optimization and setup of the Spring 2026 Enrollment Dashboard connected to the Jenzabar Data Lake (Databricks).
 
 ---
 
-## Measures Reference
+## Model Optimization Completed
 
-### Enrollment Measures
-| Measure | Description | Expected (Spring 2026) |
-|---------|-------------|------------------------|
-| Total Students | Distinct student headcount | 969 |
-| Total Credit Hours | Sum of enrolled credit hours | 13,538 |
-| Avg Credit Hours | Average credit load per student | 14 |
-| Total Courses | Sum of courses enrolled | 5,624 |
-| FT Students | Full-time student count | 879 |
-| PT Students | Part-time student count | 60 |
-| FT Percentage | Full-time percentage | 90.7% |
-| PT Percentage | Part-time percentage | 6.2% |
-| UG Students | Undergraduate count | 840 |
-| GR Students | Graduate count | 131 |
-| UG Percentage | Undergraduate percentage | 86.7% |
-| GR Percentage | Graduate percentage | 13.5% |
+### 1. Size Reduction
+- **Before**: 908.74 MB
+- **After**: 316.09 MB (65% reduction)
 
-### Demographics Measures
-| Measure | Description | Expected (Spring 2026) |
-|---------|-------------|------------------------|
-| Female Students | Female student count | 536 |
-| Male Students | Male student count | 426 |
-| Female Percentage | Female percentage | 55.3% |
-| Male Percentage | Male percentage | 44.0% |
-| First Gen Students | First-generation count | 0* |
-| First Gen Percentage | First-generation percentage | 0.0%* |
-
-*Note: All students have FIRST_GENERATION='U' (Unknown) in current data
-
-### GPA Measures
-| Measure | Description | Expected (Spring 2026) |
-|---------|-------------|------------------------|
-| Avg Term GPA | Average term GPA | 0.00* |
-| Avg Career GPA | Average cumulative GPA | 2.86 |
-
-*Note: Term GPA is 0 because Spring 2026 grades not yet posted
-
-### Retention Measures
-| Measure | Description | Expected (2025) |
-|---------|-------------|-----------------|
-| Fall Enrollment | Fall term headcount | 1,125 |
-| Spring Enrollment | Spring term headcount | 969 |
-| Persistence Rate | Fall-to-Spring persistence | 79.2% |
-
-### Graduation Measures
-| Measure | Description | Expected (Spring 2026) |
-|---------|-------------|------------------------|
-| Graduated Students | Students with degree conferred | 83 |
-| Graduation Rate | Graduation percentage | 8.6% |
-
-### Course Measures
-| Measure | Description | Expected (Spring 2026) |
-|---------|-------------|------------------------|
-| Total Course Enrollments | Total course registrations | 7,393 |
-| Registered Enrollments | Active registrations | 5,624 |
-| Dropped Enrollments | Dropped courses | 1,769 |
-| Drop Rate | Course drop percentage | 23.9% |
+### 2. Changes Made
+- Disabled auto date/time (removed 24 LocalDateTable tables)
+- Removed address_master table (unused, 109 MB)
+- Removed NULL columns from all tables
+- Removed UDEF columns from all tables
 
 ---
 
-## Setup Instructions
+## Lookup Tables Added
 
-### Step 1: Install ODBC Driver
-1. Download Simba Spark ODBC Driver from Databricks
-2. Install with default settings
+| Table | Code Column | Name Column | Relationship To |
+|-------|-------------|-------------|-----------------|
+| Term Lookup | Term Code | Term Name | stud_term_sum_div[TRM_CDE] |
+| Division Lookup | Division Code | Division Name | stud_term_sum_div[DIV_CDE] |
+| Enrollment Status Lookup | Status Code | Status Name | stud_term_sum_div[PT_FT_STS] |
+| Gender Lookup | Gender Code | Gender Name | biograph_master[GENDER] |
+| Classification Lookup | Class Code | Classification | stud_term_sum_div[CLASS_CDE] |
 
-### Step 2: Configure DSN
-1. Run `JenzabarDataLake_DSN.reg` to add the DSN
-2. Or manually create via ODBC Data Source Administrator (64-bit)
+### Term Codes Reference
+| Code | Description |
+|------|-------------|
+| 10 | Fall |
+| 30 | Spring |
+| 50 | Summer I |
+| 56 | Summer II |
+| 20 | Winter |
 
-### Step 3: Connect Power BI
-1. Open Power BI Desktop
-2. Get Data > ODBC
-3. Select "JenzabarDataLake" DSN
-4. Authenticate via Azure AD browser popup
-5. Select tables from j1 schema
-
-### Step 4: Apply Measures Script
-1. Download and install Tabular Editor 2
-2. In Power BI: External Tools > Tabular Editor
-3. Press Ctrl+Shift+C to open C# Script editor
-4. Paste contents of `PowerBI_Complete_Fix.cs`
-5. Press F5 to run
-6. Press Ctrl+S to save back to Power BI
-
----
-
-## Tabular Editor Scripts
-
-| Script | Purpose |
-|--------|---------|
-| PowerBI_Complete_Fix.cs | Creates all measures, hides columns |
-| PowerBI_Fix_Measures.cs | Fixes graduation/retention measures only |
-| PowerBI_Hide_Columns_For_Copilot.cs | Hides raw columns for Copilot |
+### Classification Codes Reference
+| Code | Description |
+|------|-------------|
+| 00 | Freshman (First Time) |
+| 01 | Freshman |
+| 02 | Sophomore |
+| 03 | Junior |
+| 04 | Senior |
+| 05 | Special - No Degree |
+| 07 | Junior - WMI |
+| 08 | Senior - WMI |
+| GR | Graduate |
 
 ---
 
-## Copilot Usage
+## DAX Measures Added (17 Total)
 
-### Prep for AI Summary
-Copy the contents of `PowerBI_Prep_For_AI_Summary.txt` into the "Prep data for AI" feature in Power BI to help Copilot understand how to use your measures.
+### Year-over-Year
+- **YoY Student Change** - Year-over-year percentage change
+- **YoY Indicator** - Arrow indicator with percentage
+- **Prior Year Students** - Same term prior year count
 
-### Sample Prompts
-- "What is the total enrollment for Spring 2026?"
-- "Show me female vs male student percentages"
-- "What is the FT/PT breakdown?"
-- "Show UG vs GR enrollment by term"
-- "What is the persistence rate?"
-- "Show graduation rate"
-- "What is the course drop rate?"
+### FTE
+- **FTE** - Full-Time Equivalent (credit hours / 15)
+- **FTE Display** - Formatted FTE
 
-### Important Rules for Copilot
-- Always use MEASURES, not raw columns
-- "Headcount" = Total Students measure
-- "Enrollment" = Total Students measure
-- "Credit hours" = Total Credit Hours measure
-- "Retention" = Persistence Rate measure
-- "Graduation rate" = Graduation Rate measure
+### Student Categories
+- **New Students** - First term at institution
+- **Returning Students** - Continuing students
+- **Avg Course Load** - Average courses per student
+
+### Academic Standing
+- **High GPA Students** - Students with GPA >= 3.5
+- **High GPA Percentage** - Percentage with high GPA
+- **Probation Students** - Students with GPA < 2.0
+- **Probation Percentage** - Percentage on probation
+
+### Trends
+- **Enrollment Trend** - For line charts
+- **Credit Hours Trend** - For line charts
+
+### Formatting
+- **GPA Color** - Conditional formatting hex codes
+- **Enrollment Change Color** - Conditional formatting hex codes
+- **Selected Term** - Dynamic term/year display
+
+---
+
+## Fixed Measures (Text/Number Conversion)
+
+### YoY Student Change
+```dax
+YoY Student Change =
+VAR CurrentYear = VALUE(MAX(stud_term_sum_div[YR_CDE]))
+VAR CurrentStudents =
+    CALCULATE(
+        [Total Students],
+        stud_term_sum_div[YR_CDE] = FORMAT(CurrentYear, "0")
+    )
+VAR PriorStudents =
+    CALCULATE(
+        [Total Students],
+        stud_term_sum_div[YR_CDE] = FORMAT(CurrentYear - 1, "0")
+    )
+RETURN
+    IF(
+        PriorStudents = 0,
+        BLANK(),
+        DIVIDE(CurrentStudents - PriorStudents, PriorStudents, 0)
+    )
+```
+
+### Prior Year Students
+```dax
+Prior Year Students =
+VAR CurrentYear = VALUE(SELECTEDVALUE(stud_term_sum_div[YR_CDE]))
+VAR CurrentTerm = SELECTEDVALUE(stud_term_sum_div[TRM_CDE])
+RETURN
+    CALCULATE(
+        [Total Students],
+        stud_term_sum_div[YR_CDE] = FORMAT(CurrentYear - 1, "0"),
+        stud_term_sum_div[TRM_CDE] = CurrentTerm,
+        ALL(stud_term_sum_div[YR_CDE])
+    )
+```
+
+---
+
+## Dashboard Pages
+
+### Page 1: Executive Summary
+- KPI Cards: Total Students, FTE, Avg Term GPA, YoY Indicator
+- Donut: Students by Division
+- Donut: Students by Enrollment Status
+- Bar: Students by Term
+- Line: Enrollment Trend
+- Slicers: Term, Division, Year
+
+### Page 2: Enrollment Trends
+- Line: Enrollment by Year/Term
+- Line: Credit Hours Trend
+- Column: Current vs Prior Year
+- Card: YoY Change
+
+### Page 3: Student Demographics
+- Donut: Students by Gender
+- Bar: Students by Classification
+- Stacked Bar: Division by Gender
+- Cards: Female, Male, First Gen counts
+
+### Page 4: Academic Performance
+- Cards: Avg Term GPA, Avg Career GPA
+- Cards: High GPA Students, Probation Students
+- Bar: GPA by Division
+- Bar: GPA by Classification
+- Line: GPA Trend
+
+### Page 5: Enrollment Status
+- Donut: FT vs PT Students
+- Bar: Status by Division
+- Cards: FT/PT counts and percentages
+- Line: FT/PT Trend
+
+### Page 6: Graduation Rates
+- Cards: Graduated Students, Graduation Rate
+- Bar: Graduates by Degree
+- Bar: Graduates by Major
+- Line: Graduation Trend
+- Table: Major, Count, Rate
+
+---
+
+## Files Created
+
+| File | Purpose |
+|------|---------|
+| Add_Lookup_Tables_Step1.txt | Create lookup tables (Tabular Editor) |
+| Add_Lookup_Tables_Step2.txt | Set properties & relationships |
+| Add_Classification_Lookup.txt | Classification lookup table |
+| Add_Classification_Lookup_Step2.txt | Classification properties |
+| Add_New_Measures_TabularEditor.cs | Add 17 DAX measures |
+| Add_Synonyms_TabularEditor.cs | Add synonyms for Copilot |
+| PowerBI_Add_Descriptions_FIXED.cs | Add descriptions |
+| Set_Sort_Columns.txt | Set sort order for lookups |
+| Fix_YoY_Measure.txt | Fix text/number comparison |
+| Copilot_Dashboard_Prompts.txt | Prompts for building pages |
+
+---
+
+## Databricks Connection
+
+- **Host**: adb-5814127397732749.9.azuredatabricks.net
+- **HTTP Path**: /sql/1.0/warehouses/29078c19f03c03ca
+- **Authentication**: Azure AD
+- **Driver**: Simba Spark ODBC Driver
+- **Schemas**: j1, j1_snapshot, pfaids, pfaids_snapshot, wil
+
+### Query Script
+```powershell
+powershell -ExecutionPolicy Bypass -File "C:/Users/ruking/databricks_query.ps1" "SELECT * FROM j1.table_name LIMIT 10"
+```
 
 ---
 
 ## Troubleshooting
 
-### Measures showing wrong values (e.g., 100% for both genders)
-- Run `PowerBI_Complete_Fix.cs` in Tabular Editor
-- This script uses ID-based filtering that doesn't depend on relationships
+### Issue: Same numbers showing for all terms
+- Check that Total Students measure is: `DISTINCTCOUNT(stud_term_sum_div[ID_NUM])`
+- Ensure no ALL() or ALLEXCEPT() is removing term filters
+- Verify Term Lookup has all term codes in your data
 
-### Copilot using columns instead of measures
-- Run the script to hide all raw columns
-- Only measures and essential filter columns should be visible
+### Issue: Text/Number comparison error
+- YR_CDE is stored as text
+- Use VALUE() to convert to number, FORMAT() to convert back
 
-### Connection timeout
-- Check VPN connection
-- Verify Databricks warehouse is running
-- Try refreshing Azure AD token
-
-### Missing data
-- Verify YR_CDE and TRM_CDE filters
-- Spring 2026 = YR_CDE '2025', TRM_CDE '30'
-
----
-
-## Files Reference
-
-| File | Description |
-|------|-------------|
-| PowerBI_Enrollment_Dashboard_README.md | This documentation |
-| PowerBI_Complete_Fix.cs | Main Tabular Editor script |
-| PowerBI_Prep_For_AI_Summary.txt | Copilot instructions |
-| PowerBI_Enrollment_Dashboard_Queries.sql | Source SQL queries |
-| JenzabarDataLake_DSN.reg | Windows DSN registry file |
+### Issue: Lookup table column not found
+- Run Step 1, save model, then run Step 2
+- Columns aren't available until model is saved
 
 ---
 
 ## Contact
-For issues with the Jenzabar Data Lake connection, contact your IT department or Jenzabar support.
-
----
-
-*Last Updated: December 2025*
+Generated with Claude Code - December 2025
