@@ -1,17 +1,17 @@
-# Power BI Enrollment Dashboard - Setup Guide
+# Power BI Enrollment Dashboard - Complete Setup Guide
 
 ## Overview
-This document covers the optimization and setup of the Spring 2026 Enrollment Dashboard connected to the Jenzabar Data Lake (Databricks).
+Spring 2026 Enrollment Dashboard connected to the Jenzabar Data Lake (Databricks) for higher education institutional research and analytics.
 
 ---
 
-## Model Optimization Completed
+## Model Optimization
 
-### 1. Size Reduction
+### Size Reduction
 - **Before**: 908.74 MB
 - **After**: 316.09 MB (65% reduction)
 
-### 2. Changes Made
+### Changes Made
 - Disabled auto date/time (removed 24 LocalDateTable tables)
 - Removed address_master table (unused, 109 MB)
 - Removed NULL columns from all tables
@@ -19,7 +19,7 @@ This document covers the optimization and setup of the Spring 2026 Enrollment Da
 
 ---
 
-## Lookup Tables Added
+## Lookup Tables
 
 | Table | Code Column | Name Column | Relationship To |
 |-------|-------------|-------------|-----------------|
@@ -28,7 +28,7 @@ This document covers the optimization and setup of the Spring 2026 Enrollment Da
 | Gender Lookup | Gender Code | Gender Name | biograph_master[GENDER] |
 | Classification Lookup | Class Code | Classification | stud_term_sum_div[CLASS_CDE] |
 
-### Classification Codes Reference
+### Classification Codes
 | Code | Description |
 |------|-------------|
 | 00 | Freshman (First Time) |
@@ -41,7 +41,7 @@ This document covers the optimization and setup of the Spring 2026 Enrollment Da
 | 08 | Senior - WMI |
 | GR | Graduate |
 
-### IPEDS Ethnicity Codes Reference
+### IPEDS Ethnicity Codes
 | Code | Description |
 |------|-------------|
 | 1 | Nonresident Alien |
@@ -56,107 +56,146 @@ This document covers the optimization and setup of the Spring 2026 Enrollment Da
 
 ---
 
-## DAX Measures Added (28 Total)
+## DAX Measures (39 Total)
+
+### Core Enrollment (4)
+- Total Students
+- Total Credit Hours
+- Avg Credit Hours
+- Total Courses
 
 ### Year-over-Year (3)
-- **YoY Student Change** - Year-over-year percentage change
-- **YoY Indicator** - Arrow indicator with percentage
-- **Prior Year Students** - Same term prior year count
+- YoY Student Change
+- YoY Indicator
+- Prior Year Students
 
 ### FTE (2)
-- **FTE** - Full-Time Equivalent (credit hours / 15)
-- **FTE Display** - Formatted FTE
+- FTE (Total Credit Hours / 12)
+- FTE Display
 
 ### Student Categories (3)
-- **New Students** - First term at institution
-- **Returning Students** - Continuing students
-- **Avg Course Load** - Average courses per student
+- New Students
+- Returning Students
+- Avg Course Load
+
+### Enrollment Status (4)
+- FT Students
+- PT Students
+- FT Percentage
+- PT Percentage
+
+### Division (4)
+- UG Students
+- GR Students
+- UG Percentage
+- GR Percentage
+
+### Demographics (4)
+- Female Students
+- Male Students
+- Female Percentage
+- Male Percentage
+
+### First Generation (2)
+- First Gen Students
+- First Gen Percentage
 
 ### Academic Standing (4)
-- **High GPA Students** - Students with GPA >= 3.5
-- **High GPA Percentage** - Percentage with high GPA
-- **Probation Students** - Students with GPA < 2.0
-- **Probation Percentage** - Percentage on probation
+- High GPA Students
+- High GPA Percentage
+- Probation Students
+- Probation Percentage
+
+### GPA (2)
+- Avg Term GPA
+- Avg Career GPA
+
+### Retention (3)
+- Fall Enrollment
+- Spring Enrollment
+- Persistence Rate
+
+### Graduation (2)
+- Graduated Students
+- Graduation Rate
 
 ### Trends (2)
-- **Enrollment Trend** - For line charts
-- **Credit Hours Trend** - For line charts
+- Enrollment Trend
+- Credit Hours Trend
+
+### Ethnicity (11)
+- Students by Ethnicity
+- Ethnicity Percentage
+- Hispanic Latino Students
+- Black African American Students
+- White Students
+- Asian Students
+- Native American Students
+- Pacific Islander Students
+- Two or More Races Students
+- Nonresident Alien Students
+- Unknown Ethnicity Students
 
 ### Formatting (3)
-- **GPA Color** - Conditional formatting hex codes
-- **Enrollment Change Color** - Conditional formatting hex codes
-- **Selected Term** - Dynamic term/year display
-
-### Ethnicity Measures (11)
-- **Students by Ethnicity** - For slicer-driven filtering
-- **Ethnicity Percentage** - Percentage calculation
-- **Hispanic Latino Students** - IPEDS Code 3
-- **Black African American Students** - IPEDS Code 6
-- **White Students** - IPEDS Code 8
-- **Asian Students** - IPEDS Code 5
-- **Native American Students** - IPEDS Code 4
-- **Pacific Islander Students** - IPEDS Code 7
-- **Two or More Races Students** - IPEDS Code 9
-- **Nonresident Alien Students** - IPEDS Code 1
-- **Unknown Ethnicity Students** - IPEDS Code 2
+- GPA Color
+- Enrollment Change Color
+- Selected Term
 
 ---
 
 ## Fixed Measures
 
-### YoY Student Change (handles text values)
+### YoY Student Change (handles non-numeric years)
 ```dax
 YoY Student Change =
-VAR CurrentYear =
-    IFERROR(VALUE(MAX(stud_term_sum_div[YR_CDE])), BLANK())
+VAR CurrentYearText = MAX(stud_term_sum_div[YR_CDE])
+VAR IsNumeric = NOT(ISERROR(VALUE(CurrentYearText)))
+VAR CurrentYear = IF(IsNumeric, VALUE(CurrentYearText), BLANK())
+VAR PriorYearText = IF(IsNumeric, FORMAT(CurrentYear - 1, "0"), BLANK())
 VAR CurrentStudents =
     CALCULATE(
         [Total Students],
-        stud_term_sum_div[YR_CDE] = FORMAT(CurrentYear, "0")
+        stud_term_sum_div[YR_CDE] = CurrentYearText
     )
 VAR PriorStudents =
     CALCULATE(
         [Total Students],
-        stud_term_sum_div[YR_CDE] = FORMAT(CurrentYear - 1, "0")
+        stud_term_sum_div[YR_CDE] = PriorYearText
     )
 RETURN
     IF(
-        ISBLANK(CurrentYear) || PriorStudents = 0,
+        ISBLANK(CurrentYear) || ISBLANK(PriorStudents) || PriorStudents = 0,
         BLANK(),
         DIVIDE(CurrentStudents - PriorStudents, PriorStudents, 0)
     )
 ```
 
-### New Students
+### Prior Year Students (handles non-numeric years)
 ```dax
-New Students =
-VAR CurrentYear = MAX(stud_term_sum_div[YR_CDE])
-VAR CurrentTerm = MAX(stud_term_sum_div[TRM_CDE])
+Prior Year Students =
+VAR CurrentYearText = SELECTEDVALUE(stud_term_sum_div[YR_CDE])
+VAR CurrentTerm = SELECTEDVALUE(stud_term_sum_div[TRM_CDE])
+VAR IsNumeric = NOT(ISERROR(VALUE(CurrentYearText)))
+VAR PriorYearText = IF(IsNumeric, FORMAT(VALUE(CurrentYearText) - 1, "0"), BLANK())
 RETURN
-CALCULATE(
-    DISTINCTCOUNT(stud_term_sum_div[ID_NUM]),
-    FILTER(
-        VALUES(stud_term_sum_div[ID_NUM]),
-        VAR StudentID = stud_term_sum_div[ID_NUM]
-        VAR FirstYear =
-            CALCULATE(
-                MIN(stud_term_sum_div[YR_CDE]),
-                ALL(stud_term_sum_div),
-                stud_term_sum_div[ID_NUM] = StudentID
-            )
-        VAR FirstTerm =
-            CALCULATE(
-                MIN(stud_term_sum_div[TRM_CDE]),
-                ALL(stud_term_sum_div),
-                stud_term_sum_div[ID_NUM] = StudentID,
-                stud_term_sum_div[YR_CDE] = FirstYear
-            )
-        RETURN FirstYear = CurrentYear && FirstTerm = CurrentTerm
+    IF(
+        ISBLANK(PriorYearText),
+        BLANK(),
+        CALCULATE(
+            [Total Students],
+            stud_term_sum_div[YR_CDE] = PriorYearText,
+            stud_term_sum_div[TRM_CDE] = CurrentTerm,
+            ALL(stud_term_sum_div[YR_CDE])
+        )
     )
-)
 ```
 
-### Ethnicity Measure Example (handles many-to-many)
+### FTE (12-hour full-time standard)
+```dax
+FTE = DIVIDE([Total Credit Hours], 12, 0)
+```
+
+### Students by Ethnicity (many-to-many handling)
 ```dax
 Students by Ethnicity =
 VAR EthnicityStudents =
@@ -173,7 +212,7 @@ RETURN
 
 ---
 
-## Dashboard Pages
+## Dashboard Pages (17 Total)
 
 ### Page 1: Executive Summary
 - KPI Cards: Total Students, FTE, Avg Term GPA, YoY Student Change
@@ -198,13 +237,12 @@ RETURN
 ### Page 4: Academic Performance
 - Cards: Avg Term GPA, Avg Career GPA, High GPA, Probation
 - Bar: GPA by Classification
-- Bar: High GPA by Classification
-- Line: GPA Trend by Classification
+- Line: GPA Trend
 - Slicers: YR_CDE, TRM_CDE, Classification
 
 ### Page 5: Ethnicity Breakdown
 - Cards: Total Students, Students by Ethnicity
-- Bar: Students by Ethnicity (VALUE_DESCRIPTION)
+- Bar: Students by VALUE_DESCRIPTION
 - Table: Ethnicity, Count, Percentage
 - Slicers: YR_CDE, TRM_CDE, Classification
 
@@ -215,68 +253,114 @@ RETURN
 - Table: Graduates by Major
 - Slicers: YR_CDE, DEGR_CDE
 
-### Page 7: Enrollment Status
+### Page 7: Enrollment Status (FT/PT)
 - Cards: FT Students, PT Students, FT%, PT%
 - Donut: Students by Status
 - Bar: Classification by Status
 - Line: FT vs PT Trend
 - Slicers: YR_CDE, TRM_CDE
 
+### Page 8: Retention Analysis
+- Cards: Fall Enrollment, Spring Enrollment, Persistence Rate
+- Bar: Persistence by Classification
+- Line: Retention Trend
+- Table: Year, Fall, Spring, Persistence, Lost Students
+- Slicers: YR_CDE, Classification
+
+### Page 9: Credit Hour Analysis
+- Cards: Total Credit Hours, Avg Credit Hours, FTE
+- Bar: Credit Hours by Classification
+- Bar: Avg Load by Classification
+- Line: Credit Hour Trend
+- Table: Classification, Hours, FTE
+- Slicers: YR_CDE, TRM_CDE, Status Name
+
+### Page 10: Major/Program Analysis
+- Cards: Total Students, Unique Majors, Avg GPA
+- Bar: Top 15 Majors by Students
+- Stacked Bar: Major by Classification
+- Table: Major, Students, GPA
+- Matrix: Major x Year heatmap
+- Slicers: YR_CDE, TRM_CDE, Classification
+
+### Page 11: New vs Returning Students
+- Cards: Total, New, Returning, New %
+- Donut: New vs Returning
+- Stacked Bar: By Classification
+- Line: Trend
+- Table: Year, Term, New, Returning
+- Slicers: YR_CDE, TRM_CDE, Classification
+
+### Page 12: At-Risk Students
+- Cards: Total, Probation, Probation %, Avg GPA
+- Bar: Probation by Classification
+- Bar: Probation Rate by Classification
+- Line: At-Risk Trend
+- Table: Classification, Probation counts
+- Slicers: YR_CDE, TRM_CDE, Classification
+
+### Page 13: Dean's List / High Achievers
+- Cards: Total, High GPA, High GPA %, Avg GPA
+- Bar: High GPA by Classification
+- Bar: High GPA Rate by Classification
+- Line: High Achiever Trend
+- Table: Classification, High GPA counts
+- Slicers: YR_CDE, TRM_CDE, Classification
+
+### Page 14: First Generation Students
+- Cards: Total, First Gen, First Gen %, Avg GPA
+- Bar: First Gen by Classification
+- Stacked Bar: First Gen by Gender
+- Line: First Gen Trend
+- Table: Classification, First Gen counts
+- Slicers: YR_CDE, TRM_CDE, Gender Name
+
+### Page 15: Course Registration Analysis
+- Cards: Total Enrollments, Registered, Dropped, Drop Rate
+- Column: Registrations by Term
+- Bar: Drop Rate by Classification
+- Line: Course Trend
+- Table: Year, Term, Enrollments, Drops
+- Slicers: YR_CDE, TRM_CDE, Classification
+
+### Page 16: Gender Analysis
+- Cards: Total, Female, Male, Ratio
+- Donut: By Gender
+- 100% Stacked Bar: Gender by Classification
+- Line: Gender Trend
+- Table: Classification, Gender breakdown
+- Slicers: YR_CDE, TRM_CDE, Classification
+
+### Page 17: Year-over-Year Deep Dive
+- Cards: Total, Prior Year, YoY Change, Difference
+- Column: Current vs Prior by Term
+- Area: Multi-Year Trend
+- Bar: YoY Change by Classification
+- Table: Detailed YoY comparison
+- Slicers: YR_CDE, TRM_CDE, Classification
+
 ---
 
-## Copilot Prompts
+## Copilot Prompts Files
 
-### Executive Summary Prompt
-```
-Create a report page titled "Executive Summary" with:
-
-ROW 1 - Four KPI cards:
-- Card 1: Total Students measure
-- Card 2: FTE measure
-- Card 3: Avg Term GPA measure
-- Card 4: YoY Student Change measure formatted as percentage
-
-ROW 2 - Two donut charts:
-- Left: Total Students by Classification from Classification Lookup
-- Right: Total Students by Status Name from Enrollment Status Lookup
-
-ROW 3 - Line chart:
-- X-axis: YR_CDE from stud_term_sum_div
-- Y-axis: Total Students measure
-- Legend: TRM_CDE from stud_term_sum_div
-
-SLICERS - Three dropdown slicers:
-- YR_CDE from stud_term_sum_div (dropdown)
-- TRM_CDE from stud_term_sum_div (dropdown)
-- Classification from Classification Lookup (dropdown)
-```
-
-### Quick Fix Prompts
-```
-Add a dropdown slicer for Classification from Classification Lookup
-
-Change the bar chart to horizontal sorted by value descending
-
-Add data labels to all charts
-
-Format cards to show no decimal places
-
-Make YR_CDE and TRM_CDE slicers sync across all pages
-```
+| File | Contents |
+|------|----------|
+| Copilot_Executive_Prompts.txt | Pages 1-7 with detailed prompts |
+| Copilot_Additional_Pages_Prompts.txt | Pages 8-17 with detailed prompts |
+| Copilot_Short_Prompts.txt | Abbreviated prompts |
 
 ---
 
-## Files Created
+## Tabular Editor Scripts
 
 | File | Purpose |
 |------|---------|
 | Add_Lookup_Tables_Step1.txt | Create lookup tables |
-| Add_Lookup_Tables_Step2.txt | Set properties & relationships |
+| Add_Lookup_Tables_Step2.txt | Set properties and relationships |
 | Add_Classification_Lookup.txt | Classification lookup table |
 | Add_New_Measures_TabularEditor.cs | Add DAX measures |
 | Add_Ethnicity_Measures.txt | Add ethnicity measures |
 | Set_Sort_Columns.txt | Set sort order for lookups |
-| Copilot_Report_Prompts.txt | Prompts for building pages |
 
 ---
 
@@ -284,7 +368,7 @@ Make YR_CDE and TRM_CDE slicers sync across all pages
 
 ### Many-to-Many: ethnic_race_report
 - Students can have multiple ethnicities (multi-racial)
-- Set cross-filter: **Single** ('ethnic_race_report' filters 'stud_term_sum_div')
+- Set cross-filter: Single ('ethnic_race_report' filters 'stud_term_sum_div')
 - Use TREATAS in measures for correct filtering
 
 ### Removed Relationships
@@ -295,32 +379,39 @@ Make YR_CDE and TRM_CDE slicers sync across all pages
 
 ## Databricks Connection
 
-- **Host**: adb-5814127397732749.9.azuredatabricks.net
-- **HTTP Path**: /sql/1.0/warehouses/29078c19f03c03ca
-- **Authentication**: Azure AD
-- **Driver**: Simba Spark ODBC Driver
-- **Schemas**: j1, j1_snapshot, pfaids, pfaids_snapshot, wil
+| Setting | Value |
+|---------|-------|
+| Host | adb-5814127397732749.9.azuredatabricks.net |
+| HTTP Path | /sql/1.0/warehouses/29078c19f03c03ca |
+| Authentication | Azure AD |
+| Driver | Simba Spark ODBC Driver |
+| Schemas | j1, j1_snapshot, pfaids, pfaids_snapshot, wil |
 
 ---
 
 ## Troubleshooting
 
-### Issue: Cannot convert 'TRAN' to Number
-- YR_CDE/TRM_CDE contain text values like 'TRAN'
-- Use IFERROR(VALUE(...), BLANK()) to handle non-numeric values
+### Cannot convert 'TRAN' to Number
+- YR_CDE contains non-numeric values like 'TRAN'
+- Use IFERROR and IsNumeric checks in measures
+- Fixed measures provided above
 
-### Issue: Same numbers for all terms
-- Ensure Total Students = `DISTINCTCOUNT(stud_term_sum_div[ID_NUM])`
+### Same numbers for all terms
+- Ensure Total Students = DISTINCTCOUNT(stud_term_sum_div[ID_NUM])
 - Check for ALL() removing filters
 - Use direct columns from stud_term_sum_div for slicers
 
-### Issue: Ethnicity not filtering correctly
+### Ethnicity not filtering correctly
 - Set relationship to Single direction
 - Use TREATAS in measures for many-to-many
 
-### Issue: Ambiguous paths error
+### Ambiguous paths error
 - Delete duplicate relationships to year_term_table
 - Use stud_term_sum_div columns directly
+
+### FTE higher than Total Students
+- Expected when average credit load > 12 hours
+- FTE = Total Credit Hours / 12 (full-time threshold)
 
 ---
 
