@@ -33,7 +33,10 @@ def count_measures(csv_path):
             
             # Filter for valid measures: has a real name and is in Ready state
             # The CSV export has multiline DAX expressions that create invalid rows
-            if name and state == 'Ready' and len(name) > 2 and not name in [')"]', ')"', ')']:
+            # Valid measure names should be alphanumeric with reasonable length
+            if (name and state == 'Ready' and len(name) > 2 and 
+                not name.startswith(')') and 
+                not all(c in ')"}\', ' for c in name)):
                 total_measures += 1
                 
                 if not folder:
@@ -91,17 +94,28 @@ def count_measures(csv_path):
     }
 
 if __name__ == "__main__":
-    # Path to the measures CSV file
-    csv_path = "Model Measures/Measures Model Analysis 20251226 162605.csv"
+    # Path to the measures CSV file - find the most recent export
+    import glob
     
-    # If running from different directory, try to find the file
-    if not os.path.exists(csv_path):
-        csv_path = os.path.join(os.path.dirname(__file__), csv_path)
+    csv_pattern = "Model Measures/Measures Model Analysis *.csv"
+    csv_files = glob.glob(csv_pattern)
     
-    if not os.path.exists(csv_path):
+    if not csv_files:
+        # Try from script directory
+        script_dir = os.path.dirname(__file__)
+        csv_pattern = os.path.join(script_dir, csv_pattern)
+        csv_files = glob.glob(csv_pattern)
+    
+    if not csv_files:
         print("Error: Could not find measures CSV file.")
+        print("Expected pattern: Model Measures/Measures Model Analysis *.csv")
         print("Please run this script from the repository root directory.")
         exit(1)
+    
+    # Use the most recent file if multiple exist
+    csv_path = max(csv_files, key=os.path.getmtime)
+    print(f"Using measures file: {os.path.basename(csv_path)}")
+    print()
     
     result = count_measures(csv_path)
     
