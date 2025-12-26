@@ -1,0 +1,299 @@
+"Name","Description","Storage Mode","Source","Is Hidden"
+"student_crs_hist","Student course registration history with grades, credits, transaction status, and detailed course information.","Import","let
+      Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+      hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+      j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+      student_crs_hist_Table = j1_Schema{[Name="student_crs_hist",Kind="Table"]}[Data],
+
+      // Remove NULL columns and all UDEF columns
+      RemovedColumns = Table.RemoveColumns(student_crs_hist_Table, {
+          // Completely NULL columns (0 values)
+          "FACULTY_PTY",
+          "STUDENT_PTY",
+          "RANDOM_PTY",
+          "RESERVED_EMAIL_SENT_DTE",
+          "ST_UNFUNDED_REASON_DEF_APPID",
+          "HS_CREDIT_STATUS_DEF_APPID",
+          "EDUC_SUCCESS_LEVEL_DEF_APPID",
+          "CRS_GROUP_ADVISING_REQ_CODES_APPID",
+          "BILLING_PERIOD_ID",
+          "PESC_COURSE_CREDIT_BASIS_CDE",
+          "ADV_APPROVAL_REQ_DTE",
+          "BILLING_OVERRIDE_DATE",
+          "LAST_WITHDRAWAL_DTE",
+          // All UDEF columns (per user request)
+          "UDEF_1A_1",
+          "UDEF_1A_2",
+          "UDEF_1A_3",
+          "UDEF_1A_4",
+          "UDEF_1A_5",
+          "UDEF_2A_1",
+          "UDEF_2A_2",
+          "UDEF_2A_3",
+          "UDEF_3A_1",
+          "UDEF_3A_2",
+          "UDEF_3A_3",
+          "UDEF_DTE_1",
+          "UDEF_DTE_2",
+          "UDEF_3_2_1",
+          "UDEF_3_2_2",
+          "UDEF_5_2_1",
+          "UDEF_5_2_2",
+          "UDEF_5_2_3"
+      }, MissingField.Ignore)
+  in
+      RemovedColumns","False"
+"stud_term_sum_div","Student term enrollment summary containing GPA, credit hours, enrollment status, and academic information for each student per academic term.","Import","let
+      Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+      hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+      j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+      stud_term_sum_div_Table = j1_Schema{[Name="stud_term_sum_div",Kind="Table"]}[Data],
+
+      // Remove NULL columns and all UDEF columns
+      RemovedColumns = Table.RemoveColumns(stud_term_sum_div_Table, {
+          // All UDEF columns are NULL (0 values) in this table
+          "UDEF_1A_1",
+          "UDEF_1A_2",
+          "UDEF_1A_3",
+          "UDEF_1A_4",
+          "UDEF_1A_5",
+          "UDEF_2A_1",
+          "UDEF_2A_2",
+          "UDEF_2A_3",
+          "UDEF_3A_1",
+          "UDEF_3A_2",
+          "UDEF_3A_3",
+          "UDEF_5A_1",
+          "UDEF_3_2_1",
+          "UDEF_3_2_2",
+          "UDEF_5_2_1",
+          "UDEF_5_2_2",
+          "UDEF_5_2_3",
+          "UDEF_5_2_4",
+          "UDEF_DTE_1",
+          "UDEF_DTE_2",
+          "UDEF_ID_1",
+          // Also NULL
+          "SNAPSHOT_TAKEN",
+          "SNAPSHOT_DTE"
+      }, MissingField.Ignore),
+    #"Removed Columns" = Table.RemoveColumns(RemovedColumns,{"ALT1_HRS_EARNED", "ALT1_HRS_GPA", "ALT1_QUAL_PTS", "ALT1_GPA", "ALT2_HRS_ATTEMPTED", "ALT2_HRS_GPA", "ALT2_QUAL_PTS", "ALT2_GPA", "APPROWVERSION", "USER_NAME", "JOB_NAME", "JOB_TIME", "File_Name", "Snapshot_Date", "CAREER_CRTYPE1_HRS", "CAREER_CRTYPE2_HRS", "CAREER_CRTYPE3_HRS", "TRM_CRTYPE1_HRS", "TRM_CRTYPE2_HRS", "TRM_CRTYPE3_HRS", "CAREER_GRADE_1_HRS", "CAREER_GRADE_2_HRS", "CAREER_GRADE_3_HRS", "CAREER_GRADE_4_HRS", "CAREER_GRADE_5_HRS", "CAREER_GRADE_6_HRS", "TRM_GRADE_1_HRS", "TRM_GRADE_2_HRS", "TRM_GRADE_3_HRS", "TRM_GRADE_4_HRS", "TRM_GRADE_5_HRS", "TRM_GRADE_6_HRS", "ALT1_HRS_ATTEMPTED", "ALT2_HRS_EARNED"})
+  in
+      #"Removed Columns"","False"
+"name_master","Name and contact information for all individuals.","Import","let
+      Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+      hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+      j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+      name_master_Table = j1_Schema{[Name="name_master",Kind="Table"]}[Data],
+
+      // Remove all UDEF columns
+      RemovedColumns = Table.RemoveColumns(name_master_Table, {
+          "UDEF_1A_1",
+          "UDEF_1A_2",
+          "UDEF_1A_3",
+          "UDEF_1A_4",
+          "UDEF_1A_5",
+          "UDEF_2A_1",
+          "UDEF_2A_2",
+          "UDEF_2A_3",
+          "UDEF_3A_1",
+          "UDEF_3A_2",
+          "UDEF_3A_3",
+          "UDEF_5A_1",
+          "UDEF_5A_2",
+          "UDEF_10A_1",
+          "UDEF_11_2_N_1",
+          "UDEF_ID_1",
+          "UDEF_ID_2",
+          "UDEF_DTE_1",
+          "UDEF_DTE_2"
+      }, MissingField.Ignore)
+  in
+      RemovedColumns","False"
+"student_master","Student academic information including entry date, residency status, first generation indicator.","Import","let
+      Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+      hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+      j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+      student_master_Table = j1_Schema{[Name="student_master",Kind="Table"]}[Data],
+
+      // Remove NULL columns and all UDEF columns
+      RemovedColumns = Table.RemoveColumns(student_master_Table, {
+          // All UDEF columns
+          "UDEF_1A_1",
+          "UDEF_1A_2",
+          "UDEF_1A_3",
+          "UDEF_1A_4",
+          "UDEF_1A_5",
+          "UDEF_1A_6",
+          "UDEF_1A_7",
+          "UDEF_1A_8",
+          "UDEF_1A_9",
+          "UDEF_2A_1",
+          "UDEF_2A_2",
+          "UDEF_2A_3",
+          "UDEF_3A_1",
+          "UDEF_3A_2",
+          "UDEF_3A_3",
+          "UDEF_5A_1",
+          "UDEF_5A_2",
+          "UDEF_10A_1",
+          "UDEF_TXT",
+          "UDEF_DTE_1",
+          "UDEF_DTE_2",
+          "UDEF_DATE_3",
+          "UDEF_DATE_4",
+          "UDEF_3_2_1",
+          "UDEF_3_2_2",
+          "UDEF_5_2_1",
+          "UDEF_5_2_2",
+          "UDEF_5_2_3",
+          "UDEF_5_2_4",
+          "UDEF_ID_NUM_1"
+      }, MissingField.Ignore)
+  in
+      RemovedColumns","False"
+"biograph_master","Biographical and demographic information including gender, birth date, citizenship for all individuals.","Import","let
+      Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+      hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+      j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+      biograph_master_Table = j1_Schema{[Name="biograph_master",Kind="Table"]}[Data],
+
+      // Remove NULL columns and all UDEF columns
+      RemovedColumns = Table.RemoveColumns(biograph_master_Table, {
+          // All UDEF columns (mostly NULL, removing all per user request)
+          "UDEF_1A_1",
+          "UDEF_1A_2",
+          "UDEF_1A_3",
+          "UDEF_1A_4",
+          "UDEF_1A_5",
+          "UDEF_1A_6",
+          "UDEF_1A_7",
+          "UDEF_2A_1",
+          "UDEF_2A_2",
+          "UDEF_2A_3",
+          "UDEF_2A_4",
+          "UDEF_3A_1",
+          "UDEF_3A_2",
+          "UDEF_3A_3",
+          "UDEF_5A_1",
+          "UDEF_5A_2",
+          "UDEF_10A_1",
+          "UDEF_11_2N_1",
+          "UDEF_11_2N_2",
+          "UDEF_ID_1",
+          "UDEF_ID_2",
+          "UDEF_DTE_1",
+          "UDEF_DTE_2"
+      }, MissingField.Ignore)
+  in
+      RemovedColumns","False"
+"ethnic_race_report","Student ethnicity and race information for IPEDS reporting.","Import","let
+    Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+    j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+    ethnic_race_report_Table = j1_Schema{[Name="ethnic_race_report",Kind="Table"]}[Data]
+in
+    ethnic_race_report_Table","False"
+"degree_history","Student degree records including graduation date, degree type, major, minor, and honors.","Import","let
+      Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+      hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+      j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+      degree_history_Table = j1_Schema{[Name="degree_history",Kind="Table"]}[Data],
+
+      // Remove all UDEF columns
+      RemovedColumns = Table.RemoveColumns(degree_history_Table, {
+          "UDEF_1A_1",
+          "UDEF_1A_2",
+          "UDEF_1A_3",
+          "UDEF_1A_4",
+          "UDEF_1A_5",
+          "UDEF_2A_1",
+          "UDEF_2A_2",
+          "UDEF_2A_3",
+          "UDEF_3A_1",
+          "UDEF_3A_2",
+          "UDEF_5A_1",
+          "UDEF_5A_2",
+          "UDEF_DTE_1",
+          "UDEF_DTE_2",
+          "UDEF_5_2_1",
+          "USDEF_5_2_2",
+          "UDEF_5_2_3",
+          "UDEF_5_2_4"
+      }, MissingField.Ignore),
+
+      // Keep your existing duplicate removal
+      #"Removed Duplicates" = Table.Distinct(RemovedColumns, {"ID_NUM"})
+  in
+      #"Removed Duplicates"","False"
+"year_term_table","Academic calendar reference table with term dates.","Import","let
+    Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+    j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+    year_term_table_Table = j1_Schema{[Name="year_term_table",Kind="Table"]}[Data]
+in
+    year_term_table_Table","False"
+"major_minor_def","Reference table defining academic majors and minors.","Import","let
+    Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+    j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+    major_minor_def_Table = j1_Schema{[Name="major_minor_def",Kind="Table"]}[Data]
+in
+    major_minor_def_Table","False"
+"ipeds_ethnic_race_val_def","Reference table for IPEDS ethnicity/race categories.","Import","let
+    Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+    j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+    ipeds_ethnic_race_val_def_Table = j1_Schema{[Name="ipeds_ethnic_race_val_def",Kind="Table"]}[Data]
+in
+    ipeds_ethnic_race_val_def_Table","False"
+"degree_definition","Reference table defining degree types.","Import","let
+    Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+    j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+    degree_definition_Table = j1_Schema{[Name="degree_definition",Kind="Table"]}[Data]
+in
+    degree_definition_Table","False"
+"Division Lookup","","Import","DATATABLE(
+        "Division Code", STRING,
+        "Division Name", STRING,
+        "Sort Order", INTEGER,
+        {
+            {"UG", "Undergraduate", 1},
+            {"GR", "Graduate", 2}
+        }
+    )","False"
+"Enrollment Status Lookup","","Import","DATATABLE(
+        "Status Code", STRING,
+        "Status Name", STRING,
+        "Sort Order", INTEGER,
+        {
+            {"F", "Full-Time", 1},
+            {"P", "Part-Time", 2}
+        }
+    )","False"
+"Gender Lookup","","Import","DATATABLE(
+        "Gender Code", STRING,
+        "Gender Name", STRING,
+        "Sort Order", INTEGER,
+        {
+            {"M", "Male", 1},
+            {"F", "Female", 2}
+        }
+    )","False"
+"Classification Lookup","Lookup table for student classification (Freshman, Sophomore, etc.)","Import","DATATABLE(
+        "Class Code", STRING,
+        "Classification", STRING,
+        "Sort Order", INTEGER,
+        {
+            {"00", "Freshman (First Time)", 1},
+            {"01", "Freshman", 2},
+            {"02", "Sophomore", 3},
+            {"03", "Junior", 4},
+            {"04", "Senior", 5},
+            {"05", "Special - No Degree", 6},
+            {"07", "Junior - WMI", 7},
+            {"08", "Senior - WMI", 8},
+            {"GR", "Graduate", 9}
+        }
+    )","False"
