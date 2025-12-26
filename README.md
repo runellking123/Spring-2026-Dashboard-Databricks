@@ -3,6 +3,11 @@
 ## Overview
 Spring 2026 Enrollment Dashboard connected to the Jenzabar Data Lake (Databricks) for higher education institutional research and analytics.
 
+## Quick Stats
+- **Total Measures**: 57 ([see details](HOW_MANY_MEASURES.md))
+- **Dashboard Pages**: 17
+- **Model Size**: 316.09 MB (65% reduction from 908.74 MB)
+
 ---
 
 ## Model Optimization
@@ -56,7 +61,7 @@ Spring 2026 Enrollment Dashboard connected to the Jenzabar Data Lake (Databricks
 
 ---
 
-## DAX Measures (39 Total)
+## DAX Measures (57 Total)
 
 ### Core Enrollment (4)
 - Total Students
@@ -140,6 +145,12 @@ Spring 2026 Enrollment Dashboard connected to the Jenzabar Data Lake (Databricks
 - GPA Color
 - Enrollment Change Color
 - Selected Term
+
+### Courses (4)
+- Total Course Enrollments
+- Course Credit Hours
+- Registered Enrollments
+- Dropped Enrollments
 
 ---
 

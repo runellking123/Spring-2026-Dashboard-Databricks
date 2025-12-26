@@ -1,0 +1,332 @@
+// ============================================================================
+// Priority Executive Measures - DAX Implementation
+// Add these measures to your Power BI model for executive-level insights
+// ============================================================================
+
+// ============================================================================
+// PHASE 1: QUICK WINS (High Impact, Easy Implementation)
+// ============================================================================
+
+// 1. Net Enrollment Change (YoY absolute difference)
+Net Enrollment Change = 
+VAR CurrentStudents = [Total Students]
+VAR PriorYearStudents = [Prior Year Students]
+RETURN
+IF(
+    ISBLANK(PriorYearStudents),
+    BLANK(),
+    CurrentStudents - PriorYearStudents
+)
+
+// 2. Credit Completion Rate
+Credit Completion Rate = 
+VAR Earned = SUM(stud_term_sum_div[HRS_EARNED])
+VAR Attempted = SUM(stud_term_sum_div[HRS_ATTEMPTED])
+RETURN
+DIVIDE(Earned, Attempted, 0)
+
+// 3. Course Withdrawal Rate
+Course Withdrawal Rate = 
+VAR TotalRegistrations = COUNTROWS(student_crs_hist)
+VAR Withdrawals = 
+    CALCULATE(
+        COUNTROWS(student_crs_hist),
+        student_crs_hist[TRANSACTION_STS] = "D"
+    )
+RETURN
+DIVIDE(Withdrawals, TotalRegistrations, 0)
+
+// 4. Withdrawn Courses Count
+Withdrawn Courses = 
+CALCULATE(
+    COUNTROWS(student_crs_hist),
+    student_crs_hist[TRANSACTION_STS] = "D"
+)
+
+// 5. Active Course Enrollments
+Active Course Enrollments = 
+CALCULATE(
+    COUNTROWS(student_crs_hist),
+    student_crs_hist[TRANSACTION_STS] = "P"
+)
+
+// 6. Unique Courses Offered
+Unique Courses Offered = 
+DISTINCTCOUNT(student_crs_hist[CRS_CDE])
+
+// 7. Students with Withdrawals
+Students with Withdrawals = 
+CALCULATE(
+    DISTINCTCOUNT(student_crs_hist[ID_NUM]),
+    student_crs_hist[TRANSACTION_STS] = "D"
+)
+
+// 8. Students at Academic Risk
+Students at Academic Risk = 
+VAR RiskIDs =
+    CALCULATETABLE(
+        VALUES(stud_term_sum_div[ID_NUM]),
+        stud_term_sum_div[CAREER_GPA] < 2.0,
+        NOT(ISBLANK(stud_term_sum_div[CAREER_GPA]))
+    )
+VAR CompletionRisk =
+    CALCULATETABLE(
+        VALUES(stud_term_sum_div[ID_NUM]),
+        DIVIDE(
+            stud_term_sum_div[HRS_EARNED],
+            stud_term_sum_div[HRS_ATTEMPTED],
+            1
+        ) < 0.75
+    )
+VAR CombinedRisk = UNION(RiskIDs, CompletionRisk)
+RETURN
+CALCULATE(
+    DISTINCTCOUNT(stud_term_sum_div[ID_NUM]),
+    stud_term_sum_div[ID_NUM] IN CombinedRisk
+)
+
+// 9. Academic Risk Percentage
+Academic Risk Percentage = 
+DIVIDE([Students at Academic Risk], [Total Students], 0)
+
+// 10. Year-to-Year Retention Rate
+Year to Year Retention Rate = 
+VAR CurrentYearText = SELECTEDVALUE(stud_term_sum_div[YR_CDE])
+VAR CurrentTerm = SELECTEDVALUE(stud_term_sum_div[TRM_CDE])
+VAR IsNumeric = NOT(ISERROR(VALUE(CurrentYearText)))
+VAR PriorYearText = IF(IsNumeric, FORMAT(VALUE(CurrentYearText) - 1, "0"), BLANK())
+VAR PriorYearStudents =
+    CALCULATETABLE(
+        VALUES(stud_term_sum_div[ID_NUM]),
+        stud_term_sum_div[YR_CDE] = PriorYearText,
+        stud_term_sum_div[TRM_CDE] = CurrentTerm,
+        ALL(stud_term_sum_div[YR_CDE])
+    )
+VAR ReturnedStudents =
+    CALCULATE(
+        DISTINCTCOUNT(stud_term_sum_div[ID_NUM]),
+        stud_term_sum_div[YR_CDE] = CurrentYearText,
+        stud_term_sum_div[TRM_CDE] = CurrentTerm,
+        stud_term_sum_div[ID_NUM] IN PriorYearStudents
+    )
+VAR PriorCount = COUNTROWS(PriorYearStudents)
+RETURN
+IF(
+    ISBLANK(PriorYearText) || PriorCount = 0,
+    BLANK(),
+    DIVIDE(ReturnedStudents, PriorCount, 0)
+)
+
+// ============================================================================
+// PHASE 2: STRATEGIC METRICS
+// ============================================================================
+
+// 11. FTE (15-hour standard for state funding)
+FTE 15-Hour Standard = 
+DIVIDE([Total Credit Hours], 15, 0)
+
+// 12. Transfer Students (estimated based on entrance data)
+Transfer Students = 
+VAR TransferIDs =
+    CALCULATETABLE(
+        VALUES(student_master[ID_NUM]),
+        student_master[ENTRANCE_CDE] IN {"T", "TR", "TRANS"},
+        ALL(student_master)
+    )
+RETURN
+CALCULATE(
+    DISTINCTCOUNT(stud_term_sum_div[ID_NUM]),
+    stud_term_sum_div[ID_NUM] IN TransferIDs
+)
+
+// 13. Transfer Percentage
+Transfer Percentage = 
+DIVIDE([Transfer Students], [Total Students], 0)
+
+// 14. Course Success Rate (C or better)
+Course Success Rate = 
+VAR SuccessGrades = 
+    CALCULATE(
+        COUNTROWS(student_crs_hist),
+        student_crs_hist[GRADE_CDE] IN {"A", "A-", "B+", "B", "B-", "C+", "C"},
+        student_crs_hist[TRANSACTION_STS] = "P"
+    )
+VAR TotalGraded =
+    CALCULATE(
+        COUNTROWS(student_crs_hist),
+        NOT(ISBLANK(student_crs_hist[GRADE_CDE])),
+        student_crs_hist[TRANSACTION_STS] = "P"
+    )
+RETURN
+DIVIDE(SuccessGrades, TotalGraded, 0)
+
+// 15. Average Courses per Student
+Avg Courses per Student = 
+DIVIDE(
+    CALCULATE(
+        COUNTROWS(student_crs_hist),
+        student_crs_hist[TRANSACTION_STS] = "P"
+    ),
+    [Total Students],
+    0
+)
+
+// 16. Total Hours Attempted
+Total Hours Attempted = 
+SUM(stud_term_sum_div[HRS_ATTEMPTED])
+
+// 17. Total Hours Earned
+Total Hours Earned = 
+SUM(stud_term_sum_div[HRS_EARNED])
+
+// 18. Hours Gap (Attempted - Earned)
+Hours Not Earned = 
+[Total Hours Attempted] - [Total Hours Earned]
+
+// 19. Students Meeting Progress Benchmark (12+ credit hours)
+Students Meeting Benchmark = 
+CALCULATE(
+    DISTINCTCOUNT(stud_term_sum_div[ID_NUM]),
+    stud_term_sum_div[HRS_ENROLLED] >= 12
+)
+
+// 20. Students Below Benchmark (<12 credit hours)
+Students Below Benchmark = 
+CALCULATE(
+    DISTINCTCOUNT(stud_term_sum_div[ID_NUM]),
+    stud_term_sum_div[HRS_ENROLLED] < 12
+)
+
+// ============================================================================
+// COMPARATIVE METRICS
+// ============================================================================
+
+// 21. Prior 3-Year Average Enrollment
+Prior 3-Year Avg Enrollment = 
+VAR CurrentYearText = SELECTEDVALUE(stud_term_sum_div[YR_CDE])
+VAR CurrentTerm = SELECTEDVALUE(stud_term_sum_div[TRM_CDE])
+VAR IsNumeric = NOT(ISERROR(VALUE(CurrentYearText)))
+RETURN
+IF(
+    NOT(IsNumeric),
+    BLANK(),
+    CALCULATE(
+        AVERAGEX(
+            VALUES(stud_term_sum_div[YR_CDE]),
+            [Total Students]
+        ),
+        stud_term_sum_div[TRM_CDE] = CurrentTerm,
+        stud_term_sum_div[YR_CDE] IN {
+            FORMAT(VALUE(CurrentYearText) - 1, "0"),
+            FORMAT(VALUE(CurrentYearText) - 2, "0"),
+            FORMAT(VALUE(CurrentYearText) - 3, "0")
+        },
+        ALL(stud_term_sum_div[YR_CDE])
+    )
+)
+
+// 22. Variance from 3-Year Average
+Variance from 3-Yr Avg = 
+VAR Current = [Total Students]
+VAR Avg3Yr = [Prior 3-Year Avg Enrollment]
+RETURN
+IF(
+    ISBLANK(Avg3Yr),
+    BLANK(),
+    Current - Avg3Yr
+)
+
+// 23. Variance from 3-Year Average %
+Variance from 3-Yr Avg % = 
+VAR Current = [Total Students]
+VAR Avg3Yr = [Prior 3-Year Avg Enrollment]
+RETURN
+IF(
+    ISBLANK(Avg3Yr) || Avg3Yr = 0,
+    BLANK(),
+    DIVIDE(Current - Avg3Yr, Avg3Yr, 0)
+)
+
+// ============================================================================
+// COMPOSITE INDICATORS (Executive Scorecard)
+// ============================================================================
+
+// 24. Overall Health Score (0-100 scale)
+Overall Health Score = 
+VAR EnrollmentHealth = 
+    IF([YoY Student Change] > 0, 25, IF([YoY Student Change] > -0.05, 15, 5))
+VAR AcademicHealth = 
+    IF([Avg Career GPA] >= 3.0, 25, IF([Avg Career GPA] >= 2.5, 15, 5))
+VAR CompletionHealth = 
+    IF([Credit Completion Rate] >= 0.85, 25, IF([Credit Completion Rate] >= 0.75, 15, 5))
+VAR RetentionHealth = 
+    IF([Persistence Rate] >= 0.85, 25, IF([Persistence Rate] >= 0.75, 15, 5))
+RETURN
+EnrollmentHealth + AcademicHealth + CompletionHealth + RetentionHealth
+
+// 25. Health Status Indicator
+Health Status = 
+VAR Score = [Overall Health Score]
+RETURN
+SWITCH(
+    TRUE(),
+    Score >= 75, "🟢 Excellent",
+    Score >= 50, "🟡 Good",
+    Score >= 25, "🟠 Needs Attention",
+    "🔴 Critical"
+)
+
+// 26. Enrollment Trend Indicator
+Enrollment Trend = 
+VAR Change = [YoY Student Change]
+RETURN
+SWITCH(
+    TRUE(),
+    ISBLANK(Change), "⚪ No Data",
+    Change > 0.05, "🟢 Strong Growth",
+    Change > 0, "🟢 Growing",
+    Change > -0.05, "🟡 Stable",
+    Change > -0.10, "🟠 Declining",
+    "🔴 Significant Decline"
+)
+
+// ============================================================================
+// FORMATTING MEASURES
+// ============================================================================
+
+// Format helpers for executive dashboards
+Enrollment KPI Color = 
+VAR Change = [YoY Student Change]
+RETURN
+SWITCH(
+    TRUE(),
+    ISBLANK(Change), "#808080",
+    Change > 0, "#4CAF50",
+    Change > -0.03, "#FFC107",
+    "#F44336"
+)
+
+Academic Health Color = 
+VAR GPA = [Avg Career GPA]
+RETURN
+SWITCH(
+    TRUE(),
+    ISBLANK(GPA), "#808080",
+    GPA >= 3.0, "#4CAF50",
+    GPA >= 2.5, "#FFC107",
+    "#F44336"
+)
+
+// ============================================================================
+// NOTES
+// ============================================================================
+// 1. Adjust GPA thresholds based on your institutional standards
+// 2. Update grade codes in Course Success Rate to match your system
+// 3. Transfer student detection may need adjustment based on ENTRANCE_CDE values
+// 4. Color codes use hex values for Power BI conditional formatting
+// 5. Format strings:
+//    - Counts: #,##0
+//    - Percentages: 0.0%
+//    - GPAs: 0.00
+//    - Currency: $#,##0
+// ============================================================================
