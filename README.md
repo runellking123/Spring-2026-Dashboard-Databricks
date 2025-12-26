@@ -3,6 +3,11 @@
 ## Overview
 Spring 2026 Enrollment Dashboard connected to the Jenzabar Data Lake (Databricks) for higher education institutional research and analytics.
 
+## Quick Stats
+- **Total Measures**: 57 ([see details](HOW_MANY_MEASURES.md))
+- **Dashboard Pages**: 17
+- **Model Size**: 316.09 MB (65% reduction from 908.74 MB)
+
 ---
 
 ## Model Optimization
