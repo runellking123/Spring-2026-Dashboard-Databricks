@@ -351,3 +351,154 @@ RETURN
         DISTINCTCOUNT(stud_term_sum_div[ID_NUM]),
         TREATAS(UnknownIDs, stud_term_sum_div[ID_NUM])
     )","Microsoft.AnalysisServices.Tabular.MeasureExtendedPropertyCollection","#,##0","False","False","False","","Model","12/22/2025 5:21:01 PM","Microsoft.AnalysisServices.Tabular.Table","12/22/2025 5:21:00 PM","stud_term_sum_div"
+"Fall-to-Fall Retention Count","Ready","Microsoft.AnalysisServices.Tabular.MeasureAnnotationCollection","","Int64","","","","","
+  VAR CohortYr = SELECTEDVALUE(CohortYears[CohortYear])
+  VAR NextYr = SELECTEDVALUE(CohortYears[NextYear])
+
+  VAR FallStudentsStart =
+      CALCULATETABLE(
+          VALUES(stud_term_sum_div[ID_NUM]),
+          stud_term_sum_div[YR_CDE] = CohortYr,
+          stud_term_sum_div[TRM_CDE] = "10",
+          ALL(stud_term_sum_div)
+      )
+
+  VAR FallStudentsEnd =
+      CALCULATETABLE(
+          VALUES(stud_term_sum_div[ID_NUM]),
+          stud_term_sum_div[YR_CDE] = NextYr,
+          stud_term_sum_div[TRM_CDE] = "10",
+          ALL(stud_term_sum_div)
+      )
+
+  VAR Retained = INTERSECT(FallStudentsStart, FallStudentsEnd)
+
+  RETURN
+      COUNTROWS(Retained)","Microsoft.AnalysisServices.Tabular.MeasureExtendedPropertyCollection","0","False","False","False","","Model","12/27/2025 3:54:55 AM","Microsoft.AnalysisServices.Tabular.Table","12/27/2025 3:54:49 AM","CohortYears"
+"Fall-to-Fall Attrition Count","Ready","Microsoft.AnalysisServices.Tabular.MeasureAnnotationCollection","","Int64","","","","","
+  VAR CohortYr = SELECTEDVALUE(CohortYears[CohortYear])
+  VAR NextYr = SELECTEDVALUE(CohortYears[NextYear])
+
+  VAR FallStudentsStart =
+      CALCULATETABLE(
+          VALUES(stud_term_sum_div[ID_NUM]),
+          stud_term_sum_div[YR_CDE] = CohortYr,
+          stud_term_sum_div[TRM_CDE] = "10",
+          ALL(stud_term_sum_div)
+      )
+
+  VAR FallStudentsEnd =
+      CALCULATETABLE(
+          VALUES(stud_term_sum_div[ID_NUM]),
+          stud_term_sum_div[YR_CDE] = NextYr,
+          stud_term_sum_div[TRM_CDE] = "10",
+          ALL(stud_term_sum_div)
+      )
+
+  VAR GraduatedStudents =
+      CALCULATETABLE(
+          VALUES(degree_history[ID_NUM]),
+          NOT(ISBLANK(degree_history[DTE_DEGR_CONFERRED])),
+          ALL(degree_history)
+      )
+
+  VAR NotReturning = EXCEPT(FallStudentsStart, FallStudentsEnd)
+  VAR NotReturningExclGrads = EXCEPT(NotReturning, GraduatedStudents)
+
+  RETURN
+      COUNTROWS(NotReturningExclGrads)","Microsoft.AnalysisServices.Tabular.MeasureExtendedPropertyCollection","0","False","False","False","","Model","12/27/2025 3:56:20 AM","Microsoft.AnalysisServices.Tabular.Table","12/27/2025 3:56:14 AM","CohortYears"
+"Fall-to-Fall Retention Rate","Ready","Microsoft.AnalysisServices.Tabular.MeasureAnnotationCollection","","Double","","","","","
+  VAR CohortYr = SELECTEDVALUE(CohortYears[CohortYear])
+  VAR NextYr = SELECTEDVALUE(CohortYears[NextYear])
+
+  VAR FallStudentsStart =
+      CALCULATETABLE(
+          VALUES(stud_term_sum_div[ID_NUM]),
+          stud_term_sum_div[YR_CDE] = CohortYr,
+          stud_term_sum_div[TRM_CDE] = "10",
+          ALL(stud_term_sum_div)
+      )
+
+  VAR FallStudentsEnd =
+      CALCULATETABLE(
+          VALUES(stud_term_sum_div[ID_NUM]),
+          stud_term_sum_div[YR_CDE] = NextYr,
+          stud_term_sum_div[TRM_CDE] = "10",
+          ALL(stud_term_sum_div)
+      )
+
+  VAR Retained = INTERSECT(FallStudentsStart, FallStudentsEnd)
+  VAR TotalStart = COUNTROWS(FallStudentsStart)
+  VAR RetainedCount = COUNTROWS(Retained)
+
+  RETURN
+      DIVIDE(RetainedCount, TotalStart, 0)","Microsoft.AnalysisServices.Tabular.MeasureExtendedPropertyCollection","0.00%;-0.00%;0.00%","False","False","False","","Model","12/27/2025 4:00:05 AM","Microsoft.AnalysisServices.Tabular.Table","12/27/2025 3:59:06 AM","CohortYears"
+"IPEDS FT Retention Rate","Ready","Microsoft.AnalysisServices.Tabular.MeasureAnnotationCollection","","Double","","","","","
+  VAR CohortYr = SELECTEDVALUE(CohortYears[CohortYear])
+  VAR NextYr = SELECTEDVALUE(CohortYears[NextYear])
+
+  VAR FirstTimeFTStudents =
+      CALCULATETABLE(
+          VALUES(stud_term_sum_div[ID_NUM]),
+          stud_term_sum_div[YR_CDE] = CohortYr,
+          stud_term_sum_div[TRM_CDE] = "10",
+          stud_term_sum_div[PT_FT_STS] = "F",
+          stud_term_sum_div[CLASS_CDE] = "00",
+          ALL(stud_term_sum_div)
+      )
+
+  VAR ReturnedNextFall =
+      CALCULATETABLE(
+          VALUES(stud_term_sum_div[ID_NUM]),
+          stud_term_sum_div[YR_CDE] = NextYr,
+          stud_term_sum_div[TRM_CDE] = "10",
+          ALL(stud_term_sum_div)
+      )
+
+  VAR Retained = INTERSECT(FirstTimeFTStudents, ReturnedNextFall)
+  VAR TotalCohort = COUNTROWS(FirstTimeFTStudents)
+  VAR RetainedCount = COUNTROWS(Retained)
+
+  RETURN
+      DIVIDE(RetainedCount, TotalCohort, 0)","Microsoft.AnalysisServices.Tabular.MeasureExtendedPropertyCollection","","False","False","False","","Model","12/27/2025 4:15:47 AM","Microsoft.AnalysisServices.Tabular.Table","12/27/2025 4:15:41 AM","CohortYears"
+"First-Time Full-Time Cohort Count  IPEDS FT Cohort Count","Ready","Microsoft.AnalysisServices.Tabular.MeasureAnnotationCollection","","Int64","","","","","
+  VAR CohortYr = SELECTEDVALUE(CohortYears[CohortYear])
+
+  VAR FirstTimeFTStudents =
+      CALCULATETABLE(
+          VALUES(stud_term_sum_div[ID_NUM]),
+          stud_term_sum_div[YR_CDE] = CohortYr,
+          stud_term_sum_div[TRM_CDE] = "10",
+          stud_term_sum_div[PT_FT_STS] = "F",
+          stud_term_sum_div[CLASS_CDE] = "00",
+          ALL(stud_term_sum_div)
+      )
+
+  RETURN
+      COUNTROWS(FirstTimeFTStudents)","Microsoft.AnalysisServices.Tabular.MeasureExtendedPropertyCollection","0","False","False","False","","Model","12/27/2025 4:16:18 AM","Microsoft.AnalysisServices.Tabular.Table","12/27/2025 4:16:13 AM","CohortYears"
+"First-Time Full-Time Retained Count  IPEDS FT Retained Count","Ready","Microsoft.AnalysisServices.Tabular.MeasureAnnotationCollection","","Int64","","","","","
+  VAR CohortYr = SELECTEDVALUE(CohortYears[CohortYear])
+  VAR NextYr = SELECTEDVALUE(CohortYears[NextYear])
+
+  VAR FirstTimeFTStudents =
+      CALCULATETABLE(
+          VALUES(stud_term_sum_div[ID_NUM]),
+          stud_term_sum_div[YR_CDE] = CohortYr,
+          stud_term_sum_div[TRM_CDE] = "10",
+          stud_term_sum_div[PT_FT_STS] = "F",
+          stud_term_sum_div[CLASS_CDE] = "00",
+          ALL(stud_term_sum_div)
+      )
+
+  VAR ReturnedNextFall =
+      CALCULATETABLE(
+          VALUES(stud_term_sum_div[ID_NUM]),
+          stud_term_sum_div[YR_CDE] = NextYr,
+          stud_term_sum_div[TRM_CDE] = "10",
+          ALL(stud_term_sum_div)
+      )
+
+  VAR Retained = INTERSECT(FirstTimeFTStudents, ReturnedNextFall)
+
+  RETURN
+      COUNTROWS(Retained)","Microsoft.AnalysisServices.Tabular.MeasureExtendedPropertyCollection","0","False","False","False","","Model","12/27/2025 4:16:46 AM","Microsoft.AnalysisServices.Tabular.Table","12/27/2025 4:16:40 AM","CohortYears"

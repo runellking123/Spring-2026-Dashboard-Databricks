@@ -297,3 +297,59 @@ in
             {"GR", "Graduate", 9}
         }
     )","False"
+"CohortYears","","Import","
+  DATATABLE(
+      "CohortYear", STRING,
+      "NextYear", STRING,
+      "Display", STRING,
+      {
+          {"2020", "2021", "Fall 2020 to Fall 2021"},
+          {"2021", "2022", "Fall 2021 to Fall 2022"},
+          {"2022", "2023", "Fall 2022 to Fall 2023"},
+          {"2023", "2024", "Fall 2023 to Fall 2024"},
+          {"2024", "2025", "Fall 2024 to Fall 2025"},
+          {"2025", "2026", "Fall 2025 to Fall 2026"}
+      }
+  )","False"
+"section_master","","Import","let
+    Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+    j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+    section_master_Table = j1_Schema{[Name="section_master",Kind="Table"]}[Data]
+in
+    section_master_Table","False"
+"section_schedules","","Import","let
+    Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+    j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+    section_schedules_Table = j1_Schema{[Name="section_schedules",Kind="Table"]}[Data]
+in
+    section_schedules_Table","False"
+"catalog_master","","Import","let
+    Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+    j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+    catalog_master_Table = j1_Schema{[Name="catalog_master",Kind="Table"]}[Data]
+in
+    catalog_master_Table","False"
+"faculty_load_table","","Import","let
+    Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+    j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+    faculty_load_table_Table = j1_Schema{[Name="faculty_load_table",Kind="Table"]}[Data]
+in
+    faculty_load_table_Table","False"
+"name_master (2)","","Import","let
+    Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+    j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+    name_master_Table = j1_Schema{[Name="name_master",Kind="Table"]}[Data]
+in
+    name_master_Table","False"
+"term_def","","Import","let
+    Source = Odbc.DataSource("dsn=JenzabarDataLake", [HierarchicalNavigation=true]),
+    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+    j1_Schema = hive_metastore_Database{[Name="j1",Kind="Schema"]}[Data],
+    term_def_Table = j1_Schema{[Name="term_def",Kind="Table"]}[Data]
+in
+    term_def_Table","False"
