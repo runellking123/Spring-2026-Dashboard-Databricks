@@ -63,7 +63,7 @@ AddMeasure("Total Section Enrollment",
 "num", "Schedule",
 "Total students enrolled across all sections");
 
-AddMeasure("Overall Fill Rate",
+AddMeasure("Overall Capacity Fill Rate",
 @"VAR TotalEnrollment = [Total Section Enrollment]
 VAR TotalCap = [Total Capacity]
 RETURN

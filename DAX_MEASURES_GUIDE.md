@@ -23,7 +23,7 @@ This guide describes the 42 new DAX measures created for the Power BI Enrollment
 1. **Total Sections** - Total count of course sections offered
 2. **Total Capacity** - Total seat capacity across all sections
 3. **Total Section Enrollment** - Total students enrolled across all sections
-4. **Overall Fill Rate** - Percentage of capacity filled
+4. **Overall Capacity Fill Rate** - Percentage of capacity filled
 5. **Open Sections** - Sections with status 'O' (Open)
 6. **Full Sections** - Sections that are full (status 'F' or 100%+ filled)
 7. **Cancelled Sections** - Sections with status 'C' (Cancelled)

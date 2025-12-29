@@ -16,7 +16,7 @@
 1. Total Sections
 2. Total Capacity
 3. Total Section Enrollment
-4. Overall Fill Rate
+4. Overall Capacity Fill Rate
 5. Open Sections
 6. Full Sections
 7. Cancelled Sections
@@ -92,7 +92,7 @@
 
 ### Course Scheduling Dashboard
 ```
-KPIs: Total Sections | Total Capacity | Overall Fill Rate | Seats Available
+KPIs: Total Sections | Total Capacity | Overall Capacity Fill Rate | Seats Available
 Chart: Fill Rate by Department (Bar)
 Table: Section Details with Fill Category
 Slicer: YR_CDE, TRM_CDE
