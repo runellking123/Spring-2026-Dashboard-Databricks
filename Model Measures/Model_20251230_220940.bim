@@ -4112,14 +4112,13 @@
           {
             "name": "On-Track Students",
             "description": "Students with appropriate credit hours for their classification level",
-            "expression": "VAR OnTrack = \n    CALCULATETABLE(\n        VALUES(stud_term_sum_div[ID_NUM]),\n        VAR ClassCode = stud_term_sum_div[CLASS_CDE]\n        VAR EarnedCredits = stud_term_sum_div[HRS_EARNED]\n        RETURN\n        SWITCH(\n            ClassCode,\n            \"01\", EarnedCredits >= 0,\n            \"02\", EarnedCredits >= 30,\n            \"03\", EarnedCredits >= 60,\n            \"04\", EarnedCredits >= 90,\n            \"GR\", TRUE(),\n            FALSE()\n        )\n    )\nRETURN\nCALCULATE(\n    DISTINCTCOUNT(stud_term_sum_div[ID_NUM]),\n    stud_term_sum_div[ID_NUM] IN OnTrack\n)",
+            "expression": "VAR _OnTrack = \n    FILTER(\n        VALUES(stud_term_sum_div[ID_NUM]),\n        VAR _ClassCode = CALCULATE(MAX(stud_term_sum_div[CLASS_CDE]))\n        VAR _EarnedCredits = CALCULATE(MAX(stud_term_sum_div[CAREER_HRS_EARNED]))\n        RETURN\n        SWITCH(\n            _ClassCode,\n            \"01\", _EarnedCredits >= 0,\n            \"02\", _EarnedCredits >= 30,\n            \"03\", _EarnedCredits >= 60,\n            \"04\", _EarnedCredits >= 90,\n            \"GR\", TRUE(),\n            FALSE()\n        )\n    )\nRETURN\nCALCULATE(\n    DISTINCTCOUNT(stud_term_sum_div[ID_NUM]),\n    stud_term_sum_div[ID_NUM] IN _OnTrack\n)",
             "formatString": "#,##0",
             "displayFolder": "GPA",
             "lineageTag": "9b19a8c6-d7d4-4cf2-bb7f-6367187fe08c",
-            "state": "semanticError",
-            "modifiedTime": "2025-12-29T06:32:36.996667",
-            "structureModifiedTime": "2025-12-29T06:32:36.11",
-            "errorMessage": "Column 'HRS_EARNED' in table 'stud_term_sum_div' cannot be found or may not be used in this expression."
+            "dataType": "int64",
+            "modifiedTime": "2025-12-30T22:10:00.000000",
+            "structureModifiedTime": "2025-12-30T22:10:00.000000"
           },
           {
             "name": "Prior Term Enrollment",
@@ -4234,26 +4233,24 @@
           {
             "name": "Term over Term Change",
             "description": "ToT change",
-            "expression": "VAR Current = DISTINCTCOUNT(stud_term_sum_div[ID_NUM]) VAR Prior = [Prior Term Enrollment] RETURN DIVIDE(Current - Prior, Prior, 0)",
+            "expression": "VAR _Current = DISTINCTCOUNT(stud_term_sum_div[ID_NUM])\nVAR _Prior = [Prior Term Enrollment]\nRETURN DIVIDE(_Current - _Prior, _Prior, 0)",
             "formatString": "0.0%",
             "displayFolder": "Trends",
             "lineageTag": "e9171b63-0753-44f1-ae74-f590c9d18a98",
-            "state": "semanticError",
-            "modifiedTime": "2025-12-29T07:10:31.966667",
-            "structureModifiedTime": "2025-12-29T07:10:31.446667",
-            "errorMessage": "The syntax for 'Current' is incorrect. (DAX(\nVAR Current = DISTINCTCOUNT(stud_term_sum_div[ID_NUM]) VAR Prior = [Prior Term Enrollment] RETURN DIVIDE(Current - Prior, Prior, 0)\n))."
+            "dataType": "double",
+            "modifiedTime": "2025-12-30T22:10:00.000000",
+            "structureModifiedTime": "2025-12-30T22:10:00.000000"
           },
           {
             "name": "YoY Enrollment Change",
             "description": "YoY change",
-            "expression": "VAR Current = DISTINCTCOUNT(stud_term_sum_div[ID_NUM]) VAR LastYear = [Same Term Last Year] RETURN DIVIDE(Current - LastYear, LastYear, 0)",
+            "expression": "VAR _Current = DISTINCTCOUNT(stud_term_sum_div[ID_NUM])\nVAR _LastYear = [Same Term Last Year]\nRETURN DIVIDE(_Current - _LastYear, _LastYear, 0)",
             "formatString": "0.0%",
             "displayFolder": "Trends",
             "lineageTag": "144a551f-3ded-4dd2-afa8-74e9f7951690",
-            "state": "semanticError",
-            "modifiedTime": "2025-12-29T07:10:31.966667",
-            "structureModifiedTime": "2025-12-29T07:10:31.446667",
-            "errorMessage": "The syntax for 'Current' is incorrect. (DAX(\nVAR Current = DISTINCTCOUNT(stud_term_sum_div[ID_NUM]) VAR LastYear = [Same Term Last Year] RETURN DIVIDE(Current - LastYear, LastYear, 0)\n))."
+            "dataType": "double",
+            "modifiedTime": "2025-12-30T22:10:00.000000",
+            "structureModifiedTime": "2025-12-30T22:10:00.000000"
           },
           {
             "name": "Active Majors Count",
@@ -9995,14 +9992,13 @@
           {
             "name": "Average Credits to Graduate",
             "description": "Average total credit hours earned by students who graduated",
-            "expression": "VAR GraduateIDs = \n    CALCULATETABLE(\n        VALUES(degree_history[ID_NUM]),\n        NOT(ISBLANK(degree_history[DTE_DEGR_CONFERRED]))\n    )\nVAR TotalCredits = \n    CALCULATE(\n        SUM(stud_term_sum_div[HRS_EARNED]),\n        stud_term_sum_div[ID_NUM] IN GraduateIDs\n    )\nVAR GraduateCount = COUNTROWS(GraduateIDs)\nRETURN\nDIVIDE(TotalCredits, GraduateCount, BLANK())",
+            "expression": "VAR _GraduateIDs = \n    CALCULATETABLE(\n        VALUES(degree_history[ID_NUM]),\n        NOT(ISBLANK(degree_history[DTE_DEGR_CONFERRED]))\n    )\nVAR _TotalCredits = \n    CALCULATE(\n        SUM(stud_term_sum_div[CAREER_HRS_EARNED]),\n        stud_term_sum_div[ID_NUM] IN _GraduateIDs\n    )\nVAR _GraduateCount = COUNTROWS(_GraduateIDs)\nRETURN\nDIVIDE(_TotalCredits, _GraduateCount, BLANK())",
             "formatString": "#,##0.00",
             "displayFolder": "GPA",
             "lineageTag": "959b85b3-2fa6-4f6f-aa2f-cc7080ca97a5",
-            "state": "semanticError",
-            "modifiedTime": "2025-12-30T19:58:29.66",
-            "structureModifiedTime": "2025-12-29T20:57:31.523333",
-            "errorMessage": "Column 'HRS_EARNED' in table 'stud_term_sum_div' cannot be found or may not be used in this expression."
+            "dataType": "double",
+            "modifiedTime": "2025-12-30T22:10:00.000000",
+            "structureModifiedTime": "2025-12-30T22:10:00.000000"
           }
         ],
         "annotations": [
@@ -19424,13 +19420,11 @@
           {
             "name": "Faculty_Summary",
             "mode": "import",
-            "state": "semanticError",
-            "modifiedTime": "2025-12-29T20:57:32.356667",
+            "modifiedTime": "2025-12-30T22:10:00.000000",
             "refreshedTime": "1699-12-31T00:00:00",
-            "errorMessage": "The syntax for 'FN' is incorrect. (DAX(\n\nGENERATE(\n    SUMMARIZE(\n        faculty_load_table,\n        faculty_load_table[INSTRCTR_ID_NUM],\n        faculty_load_table[YR_CDE],\n        faculty_load_table[TRM_CDE]\n    ),\n    VAR FacID = faculty_load_table[INSTRCTR_ID_NUM]\n    VAR Yr = faculty_load_table[YR_CDE]\n    VAR Trm = faculty_load_table[TRM_CDE]\n    VAR SectionCnt = CALCULATE(COUNTROWS(faculty_load_table), faculty_load_table[INSTRCTR_ID_NUM] = FacID, faculty_load_table[YR_CDE] = Yr, faculty_load_table[TRM_CDE] = Trm)\n    VAR LeadCnt = CALCULATE(COUNTROWS(faculty_load_table), faculty_load_table[INSTRCTR_ID_NUM] = FacID, faculty_load_table[YR_CDE] = Yr, faculty_load_table[TRM_CDE] = Trm, faculty_load_table[LEAD_INSTRCTR_FLG] = \"Y\")\n    VAR LoadPct = CALCULATE(SUM(faculty_load_table[LOAD_PERCENTAGE]), faculty_load_table[INSTRCTR_ID_NUM] = FacID, faculty_load_table[YR_CDE] = Yr, faculty_load_table[TRM_CDE] = Trm)\n    VAR FN = LOOKUPVALUE(name_master[FIRST_NAME], name_master[ID_NUM], FacID)\n    VAR LN = LOOKUPVALUE(name_master[LAST_NAME], name_master[ID_NUM], FacID)\n    VAR Email = LOOKUPVALUE(name_master[EMAIL_ADDRESS], name_master[ID_NUM], FacID)\n    VAR Courses = CALCULATETABLE(VALUES(faculty_load_table[CRS_CDE]), faculty_load_table[INSTRCTR_ID_NUM] = FacID, faculty_load_table[YR_CDE] = Yr, faculty_load_table[TRM_CDE] = Trm)\n    VAR StudentsTaught = CALCULATE(SUM(section_master[CRS_ENROLLMENT]), section_master[YR_CDE] = Yr, section_master[TRM_CDE] = Trm, section_master[CRS_CDE] IN Courses)\n    RETURN ROW(\n        \"Section Count\", SectionCnt,\n        \"Lead Sections\", LeadCnt,\n        \"Total Load Pct\", LoadPct,\n        \"First Name\", FN,\n        \"Last Name\", LN,\n        \"Full Name\", IF(ISBLANK(LN), \"ID: \" & FacID, LN & \", \" & FN),\n        \"Email\", Email,\n        \"Total Students Taught\", StudentsTaught,\n        \"Avg Section Size\", DIVIDE(StudentsTaught, SectionCnt, 0)\n    )\n)\n\n)).",
             "source": {
               "type": "calculated",
-              "expression": "\nGENERATE(\n    SUMMARIZE(\n        faculty_load_table,\n        faculty_load_table[INSTRCTR_ID_NUM],\n        faculty_load_table[YR_CDE],\n        faculty_load_table[TRM_CDE]\n    ),\n    VAR FacID = faculty_load_table[INSTRCTR_ID_NUM]\n    VAR Yr = faculty_load_table[YR_CDE]\n    VAR Trm = faculty_load_table[TRM_CDE]\n    VAR SectionCnt = CALCULATE(COUNTROWS(faculty_load_table), faculty_load_table[INSTRCTR_ID_NUM] = FacID, faculty_load_table[YR_CDE] = Yr, faculty_load_table[TRM_CDE] = Trm)\n    VAR LeadCnt = CALCULATE(COUNTROWS(faculty_load_table), faculty_load_table[INSTRCTR_ID_NUM] = FacID, faculty_load_table[YR_CDE] = Yr, faculty_load_table[TRM_CDE] = Trm, faculty_load_table[LEAD_INSTRCTR_FLG] = \"Y\")\n    VAR LoadPct = CALCULATE(SUM(faculty_load_table[LOAD_PERCENTAGE]), faculty_load_table[INSTRCTR_ID_NUM] = FacID, faculty_load_table[YR_CDE] = Yr, faculty_load_table[TRM_CDE] = Trm)\n    VAR FN = LOOKUPVALUE(name_master[FIRST_NAME], name_master[ID_NUM], FacID)\n    VAR LN = LOOKUPVALUE(name_master[LAST_NAME], name_master[ID_NUM], FacID)\n    VAR Email = LOOKUPVALUE(name_master[EMAIL_ADDRESS], name_master[ID_NUM], FacID)\n    VAR Courses = CALCULATETABLE(VALUES(faculty_load_table[CRS_CDE]), faculty_load_table[INSTRCTR_ID_NUM] = FacID, faculty_load_table[YR_CDE] = Yr, faculty_load_table[TRM_CDE] = Trm)\n    VAR StudentsTaught = CALCULATE(SUM(section_master[CRS_ENROLLMENT]), section_master[YR_CDE] = Yr, section_master[TRM_CDE] = Trm, section_master[CRS_CDE] IN Courses)\n    RETURN ROW(\n        \"Section Count\", SectionCnt,\n        \"Lead Sections\", LeadCnt,\n        \"Total Load Pct\", LoadPct,\n        \"First Name\", FN,\n        \"Last Name\", LN,\n        \"Full Name\", IF(ISBLANK(LN), \"ID: \" & FacID, LN & \", \" & FN),\n        \"Email\", Email,\n        \"Total Students Taught\", StudentsTaught,\n        \"Avg Section Size\", DIVIDE(StudentsTaught, SectionCnt, 0)\n    )\n)\n"
+              "expression": "ADDCOLUMNS(\n    SUMMARIZE(\n        faculty_load_table,\n        faculty_load_table[INSTRCTR_ID_NUM],\n        faculty_load_table[YR_CDE],\n        faculty_load_table[TRM_CDE]\n    ),\n    \"Section Count\", CALCULATE(COUNTROWS(faculty_load_table)),\n    \"Lead Sections\", CALCULATE(COUNTROWS(FILTER(faculty_load_table, faculty_load_table[LEAD_INSTRCTR_FLG] = \"Y\"))),\n    \"Total Load Pct\", CALCULATE(SUM(faculty_load_table[LOAD_PERCENTAGE])),\n    \"First Name\", LOOKUPVALUE(name_master[FIRST_NAME], name_master[ID_NUM], faculty_load_table[INSTRCTR_ID_NUM]),\n    \"Last Name\", LOOKUPVALUE(name_master[LAST_NAME], name_master[ID_NUM], faculty_load_table[INSTRCTR_ID_NUM]),\n    \"Full Name\", \n        VAR _LN = LOOKUPVALUE(name_master[LAST_NAME], name_master[ID_NUM], faculty_load_table[INSTRCTR_ID_NUM])\n        VAR _FN = LOOKUPVALUE(name_master[FIRST_NAME], name_master[ID_NUM], faculty_load_table[INSTRCTR_ID_NUM])\n        VAR _FacID = faculty_load_table[INSTRCTR_ID_NUM]\n        RETURN IF(ISBLANK(_LN), \"ID: \" & _FacID, _LN & \", \" & _FN),\n    \"Email\", LOOKUPVALUE(name_master[EMAIL_ADDRESS], name_master[ID_NUM], faculty_load_table[INSTRCTR_ID_NUM]),\n    \"Total Students Taught\", \n        VAR _Yr = faculty_load_table[YR_CDE]\n        VAR _Trm = faculty_load_table[TRM_CDE]\n        VAR _Courses = CALCULATETABLE(VALUES(faculty_load_table[CRS_CDE]))\n        RETURN CALCULATE(\n            SUM(section_master[CRS_ENROLLMENT]), \n            REMOVEFILTERS(faculty_load_table),\n            section_master[YR_CDE] = _Yr, \n            section_master[TRM_CDE] = _Trm, \n            section_master[CRS_CDE] IN _Courses\n        ),\n    \"Avg Section Size\",\n        VAR _SectionCnt = CALCULATE(COUNTROWS(faculty_load_table))\n        VAR _Yr = faculty_load_table[YR_CDE]\n        VAR _Trm = faculty_load_table[TRM_CDE]\n        VAR _Courses = CALCULATETABLE(VALUES(faculty_load_table[CRS_CDE]))\n        VAR _StudentsTaught = CALCULATE(\n            SUM(section_master[CRS_ENROLLMENT]), \n            REMOVEFILTERS(faculty_load_table),\n            section_master[YR_CDE] = _Yr, \n            section_master[TRM_CDE] = _Trm, \n            section_master[CRS_CDE] IN _Courses\n        )\n        RETURN DIVIDE(_StudentsTaught, _SectionCnt, 0)\n)"
             }
           }
         ]
