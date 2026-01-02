@@ -1,0 +1,2286 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiley University Institutional Dashboard 2020-2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-purple: #3D2C68;
+            --secondary-purple: #65538F;
+            --dark-gray: #414042;
+            --light-gray: #B1B6C1;
+            --white: #FFFFFF;
+            --accent-gold: #C9A227;
+            --success-green: #2E7D32;
+            --warning-orange: #E65100;
+            --light-bg: #F5F5F7;
+            --light-purple-bg: #F8F6FB;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: var(--light-bg);
+            color: var(--dark-gray);
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--white);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            color: var(--white);
+            padding: 25px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-placeholder {
+            width: 70px;
+            height: 70px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 32px;
+            color: var(--primary-purple);
+        }
+
+        .header-text h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .header-text .subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .header-right .division {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            opacity: 0.9;
+        }
+
+        .header-right .report-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .header-right .period {
+            font-size: 13px;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+
+        /* KPI Banner */
+        .kpi-banner {
+            background: var(--primary-purple);
+            padding: 20px 40px;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+        }
+
+        .kpi-item {
+            text-align: center;
+            color: var(--white);
+            padding: 10px;
+            border-right: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .kpi-item:last-child {
+            border-right: none;
+        }
+
+        .kpi-value {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .kpi-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 6px;
+            opacity: 0.9;
+        }
+
+        .kpi-change {
+            display: inline-block;
+            background: var(--success-green);
+            color: var(--white);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-top: 6px;
+        }
+
+        .kpi-change.neutral {
+            background: var(--accent-gold);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 25px 40px;
+        }
+
+        /* Section Styling */
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .section-icon { display: none !important; }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-purple);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .section-subtitle {
+            font-size: 11px;
+            color: var(--dark-gray);
+            opacity: 0.7;
+        }
+
+        /* Data Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .data-table thead {
+            background: var(--primary-purple);
+            color: var(--white);
+        }
+
+        .data-table th {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            padding: 12px 10px;
+            text-align: center;
+        }
+
+        .data-table th:first-child {
+            text-align: left;
+            padding-left: 15px;
+        }
+
+        .data-table td {
+            padding: 11px 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark-gray);
+            padding-left: 15px;
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--light-purple-bg);
+        }
+
+        .data-table .highlight-row {
+            background: rgba(61, 44, 104, 0.08);
+            font-weight: 600;
+        }
+
+        .trend-up {
+            color: var(--success-green);
+            font-weight: 700;
+        }
+
+        .trend-down {
+            color: var(--warning-orange);
+            font-weight: 700;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 25px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border: 1px solid #e5e5e5;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .card-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary-purple);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-badge {
+            background: var(--light-purple-bg);
+            color: var(--primary-purple);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        /* Metric Rows */
+        .metric-row {
+            margin-bottom: 14px;
+        }
+
+        .metric-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .metric-value {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: var(--primary-purple);
+            font-size: 13px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-fill.purple {
+            background: linear-gradient(90deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+        }
+
+        .progress-fill.green {
+            background: var(--success-green);
+        }
+
+        .progress-fill.gold {
+            background: var(--accent-gold);
+        }
+
+        /* Stat Boxes */
+        .stat-box {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            color: var(--white);
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-box.alt {
+            background: var(--light-purple-bg);
+            color: var(--dark-gray);
+        }
+
+        .stat-box .value {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+        .stat-box.alt .value {
+            color: var(--primary-purple);
+        }
+
+        .stat-box .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+            opacity: 0.9;
+        }
+
+        /* Highlight Cards */
+        .highlight-card {
+            background: var(--light-purple-bg);
+            border-left: 4px solid var(--accent-gold);
+            padding: 15px 18px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-card .highlight-value {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary-purple);
+        }
+
+        .highlight-card .highlight-label {
+            font-size: 11px;
+            color: var(--dark-gray);
+            margin-top: 3px;
+        }
+
+        /* Comparison Arrows */
+        .comparison {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .comparison.up {
+            color: var(--success-green);
+        }
+
+        .comparison.down {
+            color: var(--warning-orange);
+        }
+
+        /* Mini Stats Grid */
+        .mini-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .mini-stat {
+            background: var(--light-bg);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .mini-stat .value {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary-purple);
+        }
+
+        .mini-stat .label {
+            font-size: 9px;
+            text-transform: uppercase;
+            color: var(--dark-gray);
+            margin-top: 3px;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--light-gray), transparent);
+            margin: 25px 0;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark-gray);
+            color: var(--white);
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+        }
+
+        .footer-left {
+            opacity: 0.8;
+        }
+
+        .footer-right {
+            text-align: right;
+        }
+
+        .footer-tagline {
+            font-family: 'Montserrat', sans-serif;
+            font-style: italic;
+            font-size: 11px;
+            color: var(--accent-gold);
+        }
+
+        /* Trend Indicator */
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .trend-indicator.positive {
+            background: rgba(46, 125, 50, 0.1);
+            color: var(--success-green);
+        }
+
+        .trend-indicator.negative {
+            background: rgba(230, 81, 0, 0.1);
+            color: var(--warning-orange);
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background: white; }
+            .dashboard-container { box-shadow: none; max-width: 100%; }
+            .section { page-break-inside: avoid; }
+        }
+
+        @page {
+            size: letter landscape;
+            margin: 0.4in;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo-placeholder">W</div>
+                <div class="header-text">
+                    <h1>WILEY UNIVERSITY</h1>
+                    <div class="subtitle">Founded 1873 | Marshall, Texas | HBCU</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="division">Division of Institutional Research & Effectiveness</div>
+                <div class="report-title">Comprehensive Institutional Dashboard</div>
+                <div class="period">Academic Years 2020 - 2025</div>
+            </div>
+        </header>
+
+        <!-- KPI Banner -->
+        <section class="kpi-banner">
+            <div class="kpi-item">
+                <div class="kpi-value">966</div>
+                <div class="kpi-label">Fall 2025 Enrollment</div>
+                <span class="kpi-change">+65% vs 2020</span>
+            </div>
+            <div class="kpi-item">
+                <div class="kpi-value">87.6%</div>
+                <div class="kpi-label">Persistence Rate</div>
+                <span class="kpi-change">+15.6pp</span>
+            </div>
+            <div class="kpi-item">
+                <div class="kpi-value">59.8%</div>
+                <div class="kpi-label">Retention Rate</div>
+                <span class="kpi-change">+12pp vs 2020</span>
+            </div>
+            <div class="kpi-item">
+                <div class="kpi-value">3.19</div>
+                <div class="kpi-label">Avg GPA (2025)</div>
+                <span class="kpi-change">+1.0 vs 2020</span>
+            </div>
+            <div class="kpi-item">
+                <div class="kpi-value">$57.5M</div>
+                <div class="kpi-label">Total Aid Disbursed</div>
+                <span class="kpi-change neutral">2020-2025</span>
+            </div>
+            <div class="kpi-item">
+                <div class="kpi-value">716</div>
+                <div class="kpi-label">Degrees Awarded</div>
+                <span class="kpi-change neutral">2020-2025</span>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- ENROLLMENT SECTION -->
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Enrollment Trends</div>
+                        <div class="section-subtitle">Confirmed, Pre-Registered & Held Students (Transaction Status: C, P, H)</div>
+                    </div>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Academic Year</th>
+                            <th>Unique Students</th>
+                            <th>Fall Headcount</th>
+                            <th>Spring Headcount</th>
+                            <th>Summer Headcount</th>
+                            <th>Total Credit Hours</th>
+                            <th>FTE</th>
+                            <th>YoY Change</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2020</td>
+                            <td>722</td>
+                            <td>586</td>
+                            <td>500</td>
+                            <td>170</td>
+                            <td>16,663</td>
+                            <td>1,388.6</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>2021</td>
+                            <td>822</td>
+                            <td>684</td>
+                            <td>620</td>
+                            <td>183</td>
+                            <td>19,958</td>
+                            <td>1,663.2</td>
+                            <td class="trend-up">+19.8%</td>
+                        </tr>
+                        <tr>
+                            <td>2022</td>
+                            <td>788</td>
+                            <td>688</td>
+                            <td>552</td>
+                            <td>137</td>
+                            <td>18,896</td>
+                            <td>1,574.7</td>
+                            <td class="trend-down">-5.3%</td>
+                        </tr>
+                        <tr>
+                            <td>2023</td>
+                            <td>732</td>
+                            <td>631</td>
+                            <td>625</td>
+                            <td>183</td>
+                            <td>20,128</td>
+                            <td>1,677.3</td>
+                            <td class="trend-up">+6.5%</td>
+                        </tr>
+                        <tr>
+                            <td>2024</td>
+                            <td>939</td>
+                            <td>777</td>
+                            <td>777</td>
+                            <td>280</td>
+                            <td>25,756</td>
+                            <td>2,146.3</td>
+                            <td class="trend-up">+28.0%</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td>2025</td>
+                            <td>1,066</td>
+                            <td>966</td>
+                            <td>946</td>
+                            <td>—</td>
+                            <td>27,665</td>
+                            <td>2,305.4</td>
+                            <td class="trend-up">+7.4%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <div class="value">+65%</div>
+                        <div class="label">5-Year Fall Enrollment Growth</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="value">+66%</div>
+                        <div class="label">5-Year FTE Growth</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="value">389</div>
+                        <div class="label">First-Time Students Fall 2025</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="value">95%</div>
+                        <div class="label">Full-Time Rate (2025)</div>
+                    </div>
+                </div>
+                <div style="font-size: 10px; color: #888; margin-top: 8px;">*First-Time Students = students with ENTRANCE_YR=2025 and ENTRANCE_TRM=10 (Fall entry)</div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- RETENTION & PERSISTENCE SECTION -->
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Retention & Persistence</div>
+                        <div class="section-subtitle">Student Continuation Metrics</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Fall-to-Fall Retention Rate</span>
+                            <span class="card-badge">Year-over-Year</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Cohort Year</th>
+                                    <th>Fall Enrollment</th>
+                                    <th>Returned Next Fall</th>
+                                    <th>Retention Rate</th>
+                                    <th>Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2020</td>
+                                    <td>586</td>
+                                    <td>280</td>
+                                    <td>47.8%</td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>684</td>
+                                    <td>319</td>
+                                    <td>46.6%</td>
+                                    <td class="trend-down">-1.2pp</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>688</td>
+                                    <td>269</td>
+                                    <td>39.1%</td>
+                                    <td class="trend-down">-7.5pp</td>
+                                </tr>
+                                <tr>
+                                    <td>2023</td>
+                                    <td>631</td>
+                                    <td>362</td>
+                                    <td>57.4%</td>
+                                    <td class="trend-up">+18.3pp</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>2024</td>
+                                    <td>777</td>
+                                    <td>465</td>
+                                    <td>59.8%</td>
+                                    <td class="trend-up">+2.4pp</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="highlight-card" style="margin-top: 15px;">
+                            <div class="highlight-value">+12.0pp</div>
+                            <div class="highlight-label">Retention improvement (2020 to 2024)</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Fall-to-Spring Persistence Rate</span>
+                            <span class="card-badge">Same Academic Year</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Fall Enrollment</th>
+                                    <th>Persisted to Spring</th>
+                                    <th>Persistence Rate</th>
+                                    <th>Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2020</td>
+                                    <td>586</td>
+                                    <td>422</td>
+                                    <td>72.0%</td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>684</td>
+                                    <td>536</td>
+                                    <td>78.4%</td>
+                                    <td class="trend-up">+6.4pp</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>688</td>
+                                    <td>482</td>
+                                    <td>70.1%</td>
+                                    <td class="trend-down">-8.3pp</td>
+                                </tr>
+                                <tr>
+                                    <td>2023</td>
+                                    <td>631</td>
+                                    <td>531</td>
+                                    <td>84.2%</td>
+                                    <td class="trend-up">+14.1pp</td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>777</td>
+                                    <td>658</td>
+                                    <td>84.7%</td>
+                                    <td class="trend-up">+0.5pp</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>2025</td>
+                                    <td>966</td>
+                                    <td>846</td>
+                                    <td>87.6%</td>
+                                    <td class="trend-up">+2.9pp</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="highlight-card" style="margin-top: 15px;">
+                            <div class="highlight-value">+15.6pp</div>
+                            <div class="highlight-label">Persistence improvement (2020 to 2025)</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- FINANCIAL AID SECTION -->
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Financial Aid</div>
+                        <div class="section-subtitle">Student Investment & Support</div>
+                    </div>
+                </div>
+
+                <div class="grid-3">
+                    <div class="card" style="grid-column: span 2;">
+                        <div class="card-header">
+                            <span class="card-title">Financial Aid by Year</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Aid Year</th>
+                                    <th>Recipients</th>
+                                    <th>Federal Grants</th>
+                                    <th>Federal Loans</th>
+                                    <th>Institutional Aid</th>
+                                    <th>State Aid</th>
+                                    <th>Total Disbursed</th>
+                                    <th>Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2020</td>
+                                    <td>621</td>
+                                    <td>$7.1M</td>
+                                    <td>$3.7M</td>
+                                    <td>$1.3M</td>
+                                    <td>$1.1M</td>
+                                    <td>$6.7M</td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>746</td>
+                                    <td>$9.1M</td>
+                                    <td>$4.5M</td>
+                                    <td>$2.2M</td>
+                                    <td>$1.9M</td>
+                                    <td>$8.7M</td>
+                                    <td class="trend-up">+30%</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>713</td>
+                                    <td>$9.0M</td>
+                                    <td>$4.2M</td>
+                                    <td>$2.2M</td>
+                                    <td>$1.7M</td>
+                                    <td>$9.1M</td>
+                                    <td class="trend-up">+4%</td>
+                                </tr>
+                                <tr>
+                                    <td>2023</td>
+                                    <td>708</td>
+                                    <td>$10.3M</td>
+                                    <td>$4.3M</td>
+                                    <td>$2.8M</td>
+                                    <td>$1.9M</td>
+                                    <td>$10.4M</td>
+                                    <td class="trend-up">+15%</td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>909</td>
+                                    <td>$13.0M</td>
+                                    <td>$5.7M</td>
+                                    <td>$2.9M</td>
+                                    <td>$2.0M</td>
+                                    <td>$13.8M</td>
+                                    <td class="trend-up">+32%</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>2025*</td>
+                                    <td>918</td>
+                                    <td>$11.1M</td>
+                                    <td>$3.2M</td>
+                                    <td>$1.3M</td>
+                                    <td>$1.2M</td>
+                                    <td>$8.9M</td>
+                                    <td style="color: #888;">In Progress</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style="font-size: 10px; color: #888; margin-top: 10px;">*2025 data is partial/in-progress</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Pell Grant Recipients</span>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2020</span>
+                                <span class="metric-value">491 ($2.4M)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 53%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2021</span>
+                                <span class="metric-value">602 ($3.1M)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 69%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2022</span>
+                                <span class="metric-value">579 ($3.1M)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 67%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2023</span>
+                                <span class="metric-value">560 ($3.6M)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 79%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2024</span>
+                                <span class="metric-value">672 ($4.6M)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2025</span>
+                                <span class="metric-value">629 ($4.0M)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 87%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="mini-stats" style="grid-template-columns: 1fr 1fr; margin-top: 18px;">
+                            <div class="stat-box">
+                                <div class="value">$57.5M</div>
+                                <div class="label">Total Aid (2020-2025)</div>
+                            </div>
+                            <div class="stat-box alt">
+                                <div class="value">+37%</div>
+                                <div class="label">Recipients Growth</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- STUDENT SUCCESS SECTION -->
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Student Success</div>
+                        <div class="section-subtitle">Academic Performance & Completion Metrics</div>
+                    </div>
+                </div>
+
+                <div class="grid-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Average GPA</span>
+                            <span class="card-badge">By Year</span>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2020</span>
+                                <span class="metric-value">2.19 <span style="font-size: 10px; color: #888;">—</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill gold" style="width: 55%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2021</span>
+                                <span class="metric-value">2.11 <span class="trend-down" style="font-size: 10px;">-0.08</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill gold" style="width: 53%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2022</span>
+                                <span class="metric-value">2.27 <span class="trend-up" style="font-size: 10px;">+0.16</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill gold" style="width: 57%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2023</span>
+                                <span class="metric-value">2.39 <span class="trend-up" style="font-size: 10px;">+0.12</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill gold" style="width: 60%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2024</span>
+                                <span class="metric-value">2.95 <span class="trend-up" style="font-size: 10px;">+0.56</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill green" style="width: 74%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2025</span>
+                                <span class="metric-value">3.19 <span class="trend-up" style="font-size: 10px;">+0.24</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill green" style="width: 80%;"></div>
+                            </div>
+                        </div>
+                        <div class="highlight-card" style="margin-top: 15px;">
+                            <div class="highlight-value">+1.0</div>
+                            <div class="highlight-label">GPA improvement (2020 to 2025)</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Course Pass Rate</span>
+                            <span class="card-badge">Grades A-D, P, S</span>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2020</span>
+                                <span class="metric-value">74.3% <span style="font-size: 10px; color: #888;">—</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 74.3%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2021</span>
+                                <span class="metric-value">72.1% <span class="trend-down" style="font-size: 10px;">-2.2pp</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 72.1%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2022</span>
+                                <span class="metric-value">74.2% <span class="trend-up" style="font-size: 10px;">+2.1pp</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 74.2%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2023</span>
+                                <span class="metric-value">76.9% <span class="trend-up" style="font-size: 10px;">+2.7pp</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 76.9%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2024</span>
+                                <span class="metric-value">89.0% <span class="trend-up" style="font-size: 10px;">+12.1pp</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill green" style="width: 89%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2025</span>
+                                <span class="metric-value">92.4% <span class="trend-up" style="font-size: 10px;">+3.4pp</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill green" style="width: 92.4%;"></div>
+                            </div>
+                        </div>
+                        <div class="highlight-card" style="margin-top: 15px;">
+                            <div class="highlight-value">+18.1pp</div>
+                            <div class="highlight-label">Pass rate improvement</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Credit Hour Completion</span>
+                            <span class="card-badge">Earned / Attempted</span>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2020</span>
+                                <span class="metric-value">69.5% <span style="font-size: 10px; color: #888;">â€”</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 69.5%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2021</span>
+                                <span class="metric-value">68.6% <span class="trend-down" style="font-size: 10px;">-0.9pp</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 68.6%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2022</span>
+                                <span class="metric-value">72.8% <span class="trend-up" style="font-size: 10px;">+4.2pp</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 72.8%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2023</span>
+                                <span class="metric-value">77.9% <span class="trend-up" style="font-size: 10px;">+5.1pp</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 77.9%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">2024</span>
+                                <span class="metric-value">87.8% <span class="trend-up" style="font-size: 10px;">+9.9pp</span></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill green" style="width: 87.8%;"></div>
+                            </div>
+                        </div>
+                        <div class="highlight-card" style="margin-top: 15px;">
+                            <div class="highlight-value">+18.3pp</div>
+                            <div class="highlight-label">Completion rate improvement</div>
+                        </div>
+                        <div style="font-size: 10px; color: #888; margin-top: 10px;">*2025 excluded (in-progress)</div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- GRADUATION & DEMOGRAPHICS SECTION -->
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Graduation & Demographics</div>
+                        <div class="section-subtitle">Degrees Conferred & Student Population</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Degrees Awarded by Year & Type</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>BA</th>
+                                    <th>BS</th>
+                                    <th>BBA</th>
+                                    <th>Masters</th>
+                                    <th>Total</th>
+                                    <th>Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2020</td>
+                                    <td>70</td>
+                                    <td>56</td>
+                                    <td>62</td>
+                                    <td>—</td>
+                                    <td>189</td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>35</td>
+                                    <td>28</td>
+                                    <td>54</td>
+                                    <td>—</td>
+                                    <td>125</td>
+                                    <td class="trend-down">-34%</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>26</td>
+                                    <td>35</td>
+                                    <td>34</td>
+                                    <td>—</td>
+                                    <td>96</td>
+                                    <td class="trend-down">-23%</td>
+                                </tr>
+                                <tr>
+                                    <td>2023</td>
+                                    <td>18</td>
+                                    <td>36</td>
+                                    <td>28</td>
+                                    <td>—</td>
+                                    <td>82</td>
+                                    <td class="trend-down">-15%</td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>34</td>
+                                    <td>37</td>
+                                    <td>22</td>
+                                    <td>29</td>
+                                    <td>122</td>
+                                    <td class="trend-up">+49%</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>2025*</td>
+                                    <td>21</td>
+                                    <td>34</td>
+                                    <td>16</td>
+                                    <td>31</td>
+                                    <td>102</td>
+                                    <td style="color: #888;">In Progress</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="mini-stats" style="grid-template-columns: repeat(3, 1fr); margin-top: 18px;">
+                            <div class="stat-box">
+                                <div class="value">716</div>
+                                <div class="label">Total Degrees</div>
+                            </div>
+                            <div class="stat-box alt">
+                                <div class="value">60</div>
+                                <div class="label">Graduate Degrees</div>
+                            </div>
+                            <div class="stat-box alt">
+                                <div class="value">2024</div>
+                                <div class="label">First Masters Cohort</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 11px; margin-top: 15px; padding: 12px; background: var(--light-bg); border-radius: 6px;">
+                            <strong style="color: var(--primary-purple);">Graduate Program Breakdown (2024-2025):</strong><br>
+                            MBA (Business Administration): <strong>25</strong> |
+                            MS (Higher Education Admin): <strong>24</strong> |
+                            MA (Criminal Justice): <strong>11</strong>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Student Demographics (Fall Census)</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Total</th>
+                                    <th>Female</th>
+                                    <th>Male</th>
+                                    <th>Full-Time</th>
+                                    <th>Residential</th>
+                                    <th>Enrollment Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2020</td>
+                                    <td>586</td>
+                                    <td>57%</td>
+                                    <td>43%</td>
+                                    <td>85%</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>684</td>
+                                    <td>53%</td>
+                                    <td>47%</td>
+                                    <td>81%</td>
+                                    <td>56%</td>
+                                    <td class="trend-up">+17%</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>688</td>
+                                    <td>50%</td>
+                                    <td>50%</td>
+                                    <td>84%</td>
+                                    <td>67%</td>
+                                    <td class="trend-up">+1%</td>
+                                </tr>
+                                <tr>
+                                    <td>2023</td>
+                                    <td>631</td>
+                                    <td>53%</td>
+                                    <td>46%</td>
+                                    <td>90%</td>
+                                    <td>77%</td>
+                                    <td class="trend-down">-8%</td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>777</td>
+                                    <td>56%</td>
+                                    <td>44%</td>
+                                    <td>92%</td>
+                                    <td>72%</td>
+                                    <td class="trend-up">+23%</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>2025</td>
+                                    <td>966</td>
+                                    <td>56%</td>
+                                    <td>43%</td>
+                                    <td>95%</td>
+                                    <td>69%</td>
+                                    <td class="trend-up">+24%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="mini-stats" style="grid-template-columns: repeat(2, 1fr); margin-top: 18px;">
+                            <div class="highlight-card">
+                                <div class="highlight-value">+65%</div>
+                                <div class="highlight-label">Fall Enrollment Growth (2020-2025)</div>
+                            </div>
+                            <div class="highlight-card">
+                                <div class="highlight-value">1,604</div>
+                                <div class="highlight-label">First-Time Fall Students (2020-2025)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+                        <!-- IPEDS FTFT COHORT RETENTION SECTION -->
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">IPEDS First-Time Full-Time Cohort Retention</div>
+                        <div class="section-subtitle">Federal Standard Retention Metric (Fall-to-Fall)</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">FTFT Cohort Retention Rate</span>
+                            <span class="card-badge">IPEDS Standard</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Cohort Year</th>
+                                    <th>FTFT Cohort</th>
+                                    <th>Returned</th>
+                                    <th>Retention Rate</th>
+                                    <th>Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Fall 2020</td>
+                                    <td>110</td>
+                                    <td>51</td>
+                                    <td>46.4%</td>
+                                    <td>â€”</td>
+                                </tr>
+                                <tr>
+                                    <td>Fall 2021</td>
+                                    <td>183</td>
+                                    <td>96</td>
+                                    <td>52.5%</td>
+                                    <td class="trend-up">+6.1pp</td>
+                                </tr>
+                                <tr>
+                                    <td>Fall 2022</td>
+                                    <td>215</td>
+                                    <td>75</td>
+                                    <td>34.9%</td>
+                                    <td class="trend-down">-17.6pp</td>
+                                </tr>
+                                <tr>
+                                    <td>Fall 2023</td>
+                                    <td>258</td>
+                                    <td>139</td>
+                                    <td>53.9%</td>
+                                    <td class="trend-up">+19.0pp</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>Fall 2024</td>
+                                    <td>354</td>
+                                    <td>210</td>
+                                    <td>59.3%</td>
+                                    <td class="trend-up">+5.4pp</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="highlight-card" style="margin-top: 15px;">
+                            <div class="highlight-value">+12.9pp</div>
+                            <div class="highlight-label">FTFT Retention improvement (2020 to 2024)</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Graduation Rates (FTFT Cohorts)</span>
+                            <span class="card-badge">4-Year & 6-Year</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Cohort</th>
+                                    <th>Size</th>
+                                    <th>4-Yr Grads</th>
+                                    <th>4-Yr Rate</th>
+                                    <th>6-Yr Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Fall 2015</td>
+                                    <td>216</td>
+                                    <td>63</td>
+                                    <td>29.2%</td>
+                                    <td>36.1%</td>
+                                </tr>
+                                <tr>
+                                    <td>Fall 2016</td>
+                                    <td>324</td>
+                                    <td>105</td>
+                                    <td>32.4%</td>
+                                    <td>37.7%</td>
+                                </tr>
+                                <tr>
+                                    <td>Fall 2017</td>
+                                    <td>455</td>
+                                    <td>104</td>
+                                    <td>22.9%</td>
+                                    <td>25.3%</td>
+                                </tr>
+                                <tr>
+                                    <td>Fall 2018</td>
+                                    <td>187</td>
+                                    <td>44</td>
+                                    <td>23.5%</td>
+                                    <td>26.2%</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>Fall 2019</td>
+                                    <td>112</td>
+                                    <td>32</td>
+                                    <td>28.6%</td>
+                                    <td>30.4%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style="font-size: 10px; color: #888; margin-top: 10px;">*4-Year = 150% normal time; 6-Year = 2019 cohort still in progress</div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- RACE/ETHNICITY DEMOGRAPHICS SECTION -->
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Race & Ethnicity Demographics</div>
+                        <div class="section-subtitle">IPEDS Classification | Fall Census Data</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Fall 2025 Race/Ethnicity Distribution</span>
+                            <span class="card-badge">n = 966</span>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">Black or African American</span>
+                                <span class="metric-value">794 (82.2%)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 82.2%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">Hispanic/Latino</span>
+                                <span class="metric-value">120 (12.4%)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill gold" style="width: 12.4%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">Two or More Races</span>
+                                <span class="metric-value">36 (3.7%)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 3.7%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">Nonresident Alien</span>
+                                <span class="metric-value">15 (1.6%)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill green" style="width: 1.6%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">Other (White, Asian, AI/AN)</span>
+                                <span class="metric-value">19 (2.0%)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 2%;"></div>
+                            </div>
+                        </div>
+                        <div class="highlight-card" style="margin-top: 15px;">
+                            <div class="highlight-value">82.2%</div>
+                            <div class="highlight-label">Black/African American (HBCU Mission)</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Race/Ethnicity Trend (Black/African American)</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Black/AA</th>
+                                    <th>Hispanic</th>
+                                    <th>Other</th>
+                                    <th>Total</th>
+                                    <th>% Black/AA</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2020</td>
+                                    <td>514</td>
+                                    <td>28</td>
+                                    <td>44</td>
+                                    <td>586</td>
+                                    <td>87.7%</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>587</td>
+                                    <td>46</td>
+                                    <td>51</td>
+                                    <td>684</td>
+                                    <td>85.8%</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>543</td>
+                                    <td>93</td>
+                                    <td>52</td>
+                                    <td>688</td>
+                                    <td>78.9%</td>
+                                </tr>
+                                <tr>
+                                    <td>2023</td>
+                                    <td>511</td>
+                                    <td>81</td>
+                                    <td>39</td>
+                                    <td>631</td>
+                                    <td>81.0%</td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>616</td>
+                                    <td>109</td>
+                                    <td>52</td>
+                                    <td>777</td>
+                                    <td>79.3%</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>2025</td>
+                                    <td>794</td>
+                                    <td>120</td>
+                                    <td>52</td>
+                                    <td>966</td>
+                                    <td>82.2%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style="font-size: 10px; color: #888; margin-top: 10px;">*Hispanic enrollment has grown 329% since 2020</div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- GEOGRAPHIC DISTRIBUTION SECTION -->
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Geographic Distribution</div>
+                        <div class="section-subtitle">Student Origin by State/Region</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Geographic Distribution by Year</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>In-State (TX)</th>
+                                    <th>Out-of-State</th>
+                                    <th>International</th>
+                                    <th>% In-State</th>
+                                    <th>Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2020</td>
+                                    <td>284</td>
+                                    <td>297</td>
+                                    <td>5</td>
+                                    <td>48.5%</td>
+                                    <td>â€”</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>355</td>
+                                    <td>324</td>
+                                    <td>3</td>
+                                    <td>52.0%</td>
+                                    <td class="trend-up">+3.5pp</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>401</td>
+                                    <td>283</td>
+                                    <td>4</td>
+                                    <td>58.3%</td>
+                                    <td class="trend-up">+6.3pp</td>
+                                </tr>
+                                <tr>
+                                    <td>2023</td>
+                                    <td>420</td>
+                                    <td>203</td>
+                                    <td>7</td>
+                                    <td>66.7%</td>
+                                    <td class="trend-up">+8.4pp</td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>476</td>
+                                    <td>286</td>
+                                    <td>15</td>
+                                    <td>61.3%</td>
+                                    <td class="trend-down">-5.4pp</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>2025</td>
+                                    <td>590</td>
+                                    <td>357</td>
+                                    <td>15</td>
+                                    <td>61.3%</td>
+                                    <td>â€” 0.0pp</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Fall 2025 Geographic Breakdown</span>
+                            <span class="card-badge">n = 962</span>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">Texas (In-State)</span>
+                                <span class="metric-value">590 (61.3%)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 61.3%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">Out-of-State (US)</span>
+                                <span class="metric-value">357 (37.1%)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill gold" style="width: 37.1%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">International</span>
+                                <span class="metric-value">15 (1.6%)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill green" style="width: 1.6%;"></div>
+                            </div>
+                        </div>
+                        <div class="mini-stats" style="grid-template-columns: 1fr 1fr; margin-top: 18px;">
+                            <div class="stat-box">
+                                <div class="value">+108%</div>
+                                <div class="label">TX Student Growth (2020-2025)</div>
+                            </div>
+                            <div class="stat-box alt">
+                                <div class="value">+200%</div>
+                                <div class="label">International Growth</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- SAP AND ACADEMIC STANDING SECTION -->
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Satisfactory Academic Progress (SAP)</div>
+                        <div class="section-subtitle">Financial Aid Eligibility Status</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">SAP Status by Aid Year</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Aid Year</th>
+                                    <th>SAP Met</th>
+                                    <th>Warning</th>
+                                    <th>Not Met</th>
+                                    <th>SAP Rate</th>
+                                    <th>Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2020</td>
+                                    <td>271</td>
+                                    <td>63</td>
+                                    <td>0</td>
+                                    <td>81.1%</td>
+                                    <td>â€”</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>281</td>
+                                    <td>109</td>
+                                    <td>5</td>
+                                    <td>71.1%</td>
+                                    <td class="trend-down">-10.0pp</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>319</td>
+                                    <td>57</td>
+                                    <td>156</td>
+                                    <td>60.0%</td>
+                                    <td class="trend-down">-11.1pp</td>
+                                </tr>
+                                <tr>
+                                    <td>2023</td>
+                                    <td>429</td>
+                                    <td>34</td>
+                                    <td>32</td>
+                                    <td>86.7%</td>
+                                    <td class="trend-up">+26.7pp</td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>477</td>
+                                    <td>83</td>
+                                    <td>22</td>
+                                    <td>82.0%</td>
+                                    <td class="trend-down">-4.7pp</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>2025*</td>
+                                    <td>367</td>
+                                    <td>39</td>
+                                    <td>34</td>
+                                    <td>83.4%</td>
+                                    <td class="trend-up">+1.4pp</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style="font-size: 10px; color: #888; margin-top: 10px;">*2025 data is in-progress. SAP Rate = SAP Met / (SAP Met + Warning + Not Met)</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Dean's List & Honor Roll</span>
+                            <span class="card-badge">Fall Census</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Dean's List (â‰¥3.5)</th>
+                                    <th>Honor Roll (3.0-3.49)</th>
+                                    <th>Total Honors %</th>
+                                    <th>Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2020</td>
+                                    <td>81 (14.0%)</td>
+                                    <td>145</td>
+                                    <td>39.1%</td>
+                                    <td>â€”</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>92 (13.7%)</td>
+                                    <td>153</td>
+                                    <td>36.6%</td>
+                                    <td class="trend-down">-2.5pp</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>106 (15.7%)</td>
+                                    <td>144</td>
+                                    <td>37.1%</td>
+                                    <td class="trend-up">+0.5pp</td>
+                                </tr>
+                                <tr>
+                                    <td>2023</td>
+                                    <td>90 (14.4%)</td>
+                                    <td>149</td>
+                                    <td>38.2%</td>
+                                    <td class="trend-up">+1.1pp</td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>190 (24.5%)</td>
+                                    <td>239</td>
+                                    <td>55.4%</td>
+                                    <td class="trend-up">+17.2pp</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>2025</td>
+                                    <td>261 (27.4%)</td>
+                                    <td>310</td>
+                                    <td>59.9%</td>
+                                    <td class="trend-up">+4.5pp</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="highlight-card" style="margin-top: 15px;">
+                            <div class="highlight-value">+20.8pp</div>
+                            <div class="highlight-label">Honors Rate improvement (2020 to 2025)</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- STUDENT-TO-FACULTY RATIO & PROGRAM ENROLLMENT -->
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Faculty & Program Enrollment</div>
+                        <div class="section-subtitle">Instructional Quality Metrics</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Student-to-Faculty Ratio</span>
+                            <span class="card-badge">Fall Term</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Unique Faculty</th>
+                                    <th>Fall Students</th>
+                                    <th>Ratio</th>
+                                    <th>Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2020</td>
+                                    <td>60</td>
+                                    <td>586</td>
+                                    <td>9.8:1</td>
+                                    <td>â€”</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>53</td>
+                                    <td>684</td>
+                                    <td>12.9:1</td>
+                                    <td class="trend-down">+3.1</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>52</td>
+                                    <td>688</td>
+                                    <td>13.2:1</td>
+                                    <td class="trend-down">+0.3</td>
+                                </tr>
+                                <tr>
+                                    <td>2023</td>
+                                    <td>55</td>
+                                    <td>631</td>
+                                    <td>11.5:1</td>
+                                    <td class="trend-up">-1.7</td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>61</td>
+                                    <td>777</td>
+                                    <td>12.7:1</td>
+                                    <td class="trend-down">+1.2</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>2025</td>
+                                    <td>62</td>
+                                    <td>966</td>
+                                    <td>15.6:1</td>
+                                    <td class="trend-down">+2.9</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style="font-size: 10px; color: #888; margin-top: 10px;">*Lower ratio = smaller class sizes. National avg ~18:1</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Top Programs by Enrollment (Fall 2025)</span>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">Business Administration</span>
+                                <span class="metric-value">174</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">Interdisciplinary Studies</span>
+                                <span class="metric-value">92</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 53%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">Criminal Justice</span>
+                                <span class="metric-value">87</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 50%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">Physical Education & Health</span>
+                                <span class="metric-value">85</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill purple" style="width: 49%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">Biology (BS)</span>
+                                <span class="metric-value">69</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill green" style="width: 40%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">MBA (Graduate)</span>
+                                <span class="metric-value">63</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill gold" style="width: 36%;"></div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-header">
+                                <span class="metric-label">Higher Education Admin (MA)</span>
+                                <span class="metric-value">49</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill gold" style="width: 28%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- TRANSFER STUDENTS & LOAN DEBT -->
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Transfer Students & Financial Outcomes</div>
+                        <div class="section-subtitle">Student Mobility & Loan Metrics</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">New Student Composition (Fall Entry)</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>First-Time</th>
+                                    <th>Transfer</th>
+                                    <th>Total New</th>
+                                    <th>% Transfer</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2020</td>
+                                    <td>128</td>
+                                    <td>0</td>
+                                    <td>128</td>
+                                    <td>0.0%</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>217</td>
+                                    <td>0</td>
+                                    <td>217</td>
+                                    <td>0.0%</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>239</td>
+                                    <td>0</td>
+                                    <td>239</td>
+                                    <td>0.0%</td>
+                                </tr>
+                                <tr>
+                                    <td>2023</td>
+                                    <td>262</td>
+                                    <td>0</td>
+                                    <td>262</td>
+                                    <td>0.0%</td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>375</td>
+                                    <td>15</td>
+                                    <td>390</td>
+                                    <td>3.8%</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>2025</td>
+                                    <td>358</td>
+                                    <td>13</td>
+                                    <td>371</td>
+                                    <td>3.5%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style="font-size: 10px; color: #888; margin-top: 10px;">*Undergraduate new students only. Graduate students tracked separately.</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Federal Loan Metrics</span>
+                            <span class="card-badge">Aid Year</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Aid Year</th>
+                                    <th>Borrowers</th>
+                                    <th>Total Loans</th>
+                                    <th>Avg/Borrower</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2020</td>
+                                    <td>422</td>
+                                    <td>$1.17M</td>
+                                    <td>$2,773</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>505</td>
+                                    <td>$1.37M</td>
+                                    <td>$2,711</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>557</td>
+                                    <td>$1.36M</td>
+                                    <td>$2,447</td>
+                                </tr>
+                                <tr>
+                                    <td>2023</td>
+                                    <td>543</td>
+                                    <td>$1.42M</td>
+                                    <td>$2,621</td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>625</td>
+                                    <td>$1.76M</td>
+                                    <td>$2,813</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>2025*</td>
+                                    <td>757</td>
+                                    <td><!-- KEY ACCOMPLISHMENTS SUMMARY -->.98M</td>
+                                    <td>$1,295</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="mini-stats" style="grid-template-columns: 1fr 1fr; margin-top: 18px;">
+                            <div class="stat-box">
+                                <div class="value">~$11K</div>
+                                <div class="label">Est. Avg Debt at Graduation</div>
+                            </div>
+                            <div class="stat-box alt">
+                                <div class="value">Below Avg</div>
+                                <div class="label">vs. National ($29K)</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 10px; color: #888; margin-top: 10px;">*2025 in-progress. Est. cumulative debt = avg annual Ã— 4 years.</div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+<!-- KEY ACCOMPLISHMENTS SUMMARY -->
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Key Accomplishments Summary</div>
+                        <div class="section-subtitle">Major Milestones 2020-2025</div>
+                    </div>
+                </div>
+
+                <div class="grid-3">
+                    <div class="highlight-card">
+                        <div class="highlight-value">+65%</div>
+                        <div class="highlight-label">Fall Enrollment Growth (586 → 966)</div>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-value">+66%</div>
+                        <div class="highlight-label">FTE Growth (1,389 → 2,305)</div>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-value">+1.0</div>
+                        <div class="highlight-label">GPA Improvement (2.19 → 3.19)</div>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-value">87.6%</div>
+                        <div class="highlight-label">Persistence Rate (Best Ever)</div>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-value">59.8%</div>
+                        <div class="highlight-label">Retention Rate (+12pp improvement)</div>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-value">92.4%</div>
+                        <div class="highlight-label">Course Pass Rate (+18pp improvement)</div>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-value">$57.5M</div>
+                        <div class="highlight-label">Total Financial Aid Invested</div>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-value">716</div>
+                        <div class="highlight-label">Degrees Conferred</div>
+                    </div>
+                    <div class="highlight-card">
+                        <div class="highlight-value">2024</div>
+                        <div class="highlight-label">First Graduate Degree Cohort</div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-left">
+                <div><strong>Division of Institutional Research & Effectiveness</strong></div>
+                <div>Data Source: Jenzabar J1 Data Lake (Databricks) | Transaction Status: C, P, H | Report Generated: January 2025</div>
+            </div>
+            <div class="footer-right">
+                <div class="footer-tagline">"Go Forth Inspired"</div>
+                <div>Wiley University | 711 Wiley Avenue, Marshall, TX 75670</div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
+
+
+
